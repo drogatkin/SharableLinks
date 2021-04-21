@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Links</string>
+    <string name="title_home">Groups</string>
+    <string name="title_dashboard">Line</string>
+    <string name="title_notifications">Dot</string>
+    <string name="lb_nogoups">No groups created</string>
+    <string name="ht_groupnane">Group name</string>
+    <string name="menu_add">Add</string>
+    <string name="menu_ok">OK</string>
+</resources>

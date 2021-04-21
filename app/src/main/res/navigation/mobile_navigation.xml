@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_groups">
+
+    <fragment
+        android:id="@+id/navigation_groups"
+        android:name="rogatkin.mobile.app.mylinks.ui.group.GroupFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_groups" />
+
+    <fragment
+        android:id="@+id/navigation_line"
+        android:name="rogatkin.mobile.app.mylinks.ui.line.LineFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_line" />
+
+    <fragment
+        android:id="@+id/navigation_dot"
+        android:name="rogatkin.mobile.app.mylinks.ui.notifications.DotFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_dot" />
+</navigation>
