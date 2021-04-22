@@ -19,33 +19,45 @@ class GroupFragment : Fragment() {
     private lateinit var groupViewModel: GroupViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         groupViewModel =
-                ViewModelProvider(this, ViewModelModelFactory((activity as MainActivity).model)).get(GroupViewModel::class.java)
+            ViewModelProvider(this, ViewModelModelFactory((activity as MainActivity).model)).get(
+                GroupViewModel::class.java
+            )
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
         // val textView: TextView = root.findViewById(R.id.tx_nogroups)
         groupViewModel.getGroups().observe(viewLifecycleOwner, Observer {
             with(root.findViewById<RecyclerView>(R.id.ls_groups)) {
-                    this?.setLayoutManager(LinearLayoutManager(context))
-                    this?.adapter = GroupAdapter((activity as MainActivity).model.load(null, group::class.java, null)!!/*groupViewModel.getGroup().value!!*/)
-
-                  //  this.adapter?.notifyDataSetChanged()
+                this?.setLayoutManager(LinearLayoutManager(context))
+                if (this.adapter == null) {
+                    this.adapter = GroupAdapter(
+                        (activity as MainActivity).model.load(
+                            null,
+                            group::class.java,
+                            null
+                        )!!/*groupViewModel.getGroup().value!!*/
+                    )
+                } else {
+                    (this.adapter as GroupAdapter).refresh(it)
+                    this.adapter?.notifyDataSetChanged()
+                }
             }
         })
         return root
     }
 
     inner class GroupAdapter(private val dataSet: ArrayList<group>) : // _all
-            RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
+        RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
 
         /**
          * Provide a reference to the type of views that you are using
          * (custom ViewHolder).
          */
-        inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+        inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view),
+            View.OnClickListener {
 
             fun update(element: group) {
                 val ac = activity as MainActivity
@@ -60,7 +72,7 @@ class GroupFragment : Fragment() {
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(viewGroup.context)
-                    .inflate(R.layout.recycler_group, viewGroup, false)
+                .inflate(R.layout.recycler_group, viewGroup, false)
 
             return ViewHolder(view)
         }
@@ -76,6 +88,11 @@ class GroupFragment : Fragment() {
         }
 
         fun getItem(pos: Int): group = dataSet.get(pos)
+
+        fun refresh(newGroups:ArrayList<group>) {
+            dataSet.clear()
+            dataSet.addAll(newGroups)
+        }
     }
 
     fun showEmpty(empty: Boolean) {

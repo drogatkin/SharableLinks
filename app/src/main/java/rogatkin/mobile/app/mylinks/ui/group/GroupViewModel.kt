@@ -8,7 +8,6 @@ import rogatkin.mobile.app.mylinks.model.Model
 import rogatkin.mobile.app.mylinks.model.group
 
 class GroupViewModel(val model: Model) : ViewModel() {
-   // lateinit private var m: Model
 
     private val groups: MutableLiveData<ArrayList<group>> by lazy {
         MutableLiveData<ArrayList<group>>().also {
@@ -20,13 +19,15 @@ class GroupViewModel(val model: Model) : ViewModel() {
         return groups
     }
 
-
+    fun setGroups(upGroups: ArrayList<group>) {
+        groups.value = upGroups
+    }
 
 }
 
-class ViewModelModelFactory (val model:Model) : ViewModelProvider.Factory {
+class ViewModelModelFactory(val model: Model) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-       return modelClass.getConstructor(Model::class.java).newInstance(model)
+        return modelClass.getConstructor(Model::class.java).newInstance(model)
     }
 
 }
