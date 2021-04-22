@@ -2,7 +2,6 @@ package rogatkin.mobile.app.mylinks
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,8 +9,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.model.Model
-import rogatkin.mobile.app.mylinks.model.group
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         return true;
     }
 
-   override fun onOptionsItemSelected(item: MenuItem) =
+   /*override fun onOptionsItemSelected(item: MenuItem) =
         when (item.itemId) {
         R.id.act_done -> {
             val group = group()
@@ -55,5 +52,5 @@ class MainActivity : AppCompatActivity() {
         } else -> {
             super.onOptionsItemSelected(item)
         }
-    }
+    }*/
 }

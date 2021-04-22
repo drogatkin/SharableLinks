@@ -2,6 +2,7 @@ package rogatkin.mobile.app.mylinks.ui.group
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.group
+import java.util.*
 
 class GroupFragment : Fragment() {
 
@@ -28,6 +30,7 @@ class GroupFragment : Fragment() {
                 GroupViewModel::class.java
             )
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
+        setHasOptionsMenu(true)
         // val textView: TextView = root.findViewById(R.id.tx_nogroups)
         groupViewModel.getGroups().observe(viewLifecycleOwner, Observer {
             with(root.findViewById<RecyclerView>(R.id.ls_groups)) {
@@ -48,6 +51,27 @@ class GroupFragment : Fragment() {
         })
         return root
     }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+        when (item.itemId) {
+            R.id.act_done -> {
+                val group = group()
+                (activity as MainActivity).model.vc.fillModel(context, activity, group)
+                group.created_on = Date()
+                group.modified_on = group.created_on
+                (activity as MainActivity).model.save(group)
+                // perhaps just hide the input field
+                group.name = ""
+                (activity as MainActivity).model.vc.fillView(context, activity, group)
+
+                // update list
+
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
 
     inner class GroupAdapter(private val dataSet: ArrayList<group>) : // _all
         RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
@@ -89,7 +113,7 @@ class GroupFragment : Fragment() {
 
         fun getItem(pos: Int): group = dataSet.get(pos)
 
-        fun refresh(newGroups:ArrayList<group>) {
+        fun refresh(newGroups: ArrayList<group>) {
             dataSet.clear()
             dataSet.addAll(newGroups)
         }
