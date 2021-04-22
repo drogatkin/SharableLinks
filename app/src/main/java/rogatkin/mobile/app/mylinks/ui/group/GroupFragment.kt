@@ -62,10 +62,12 @@ class GroupFragment : Fragment() {
                 (activity as MainActivity).model.save(group)
                 // perhaps just hide the input field
                 group.name = ""
-                (activity as MainActivity).model.vc.fillView(context, activity, group)
-
-                // update list
-
+               (activity as MainActivity).model.vc.fillView(context, activity, group)
+                groupViewModel.setGroups((activity as MainActivity).model.load(
+                    null,
+                    rogatkin.mobile.app.mylinks.model.group::class.java,
+                    null
+                )!!)
                 true
             }
             else -> {
