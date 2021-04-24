@@ -55,4 +55,15 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx ,"links.db", null, 1) {
             database.close()
         }
     }
+
+        fun remove(r: Id): Int {
+            val database = this.writableDatabase
+            return try {
+                database.delete(helper.resolveStoreName(r.javaClass),
+                    "_id=?", arrayOf("" + r.id))
+            } finally {
+                database.close()
+            }
+        }
+
 }

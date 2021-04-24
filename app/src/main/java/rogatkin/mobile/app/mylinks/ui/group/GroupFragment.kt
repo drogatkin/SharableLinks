@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import rogatkin.mobile.app.mylinks.MainActivity
@@ -32,9 +33,12 @@ class GroupFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
         setHasOptionsMenu(true)
         // val textView: TextView = root.findViewById(R.id.tx_nogroups)
+        with(root.findViewById<RecyclerView>(R.id.ls_groups)!!) {
+            this.setLayoutManager(LinearLayoutManager(context))
+            setRecyclerViewItemTouchListener().attachToRecyclerView(this)
+        }
         groupViewModel.getGroups().observe(viewLifecycleOwner, Observer {
             with(root.findViewById<RecyclerView>(R.id.ls_groups)) {
-                this?.setLayoutManager(LinearLayoutManager(context))
                 if (this.adapter == null) {
                     this.adapter = GroupAdapter(
                         (activity as MainActivity).model.load(
@@ -52,9 +56,42 @@ class GroupFragment : Fragment() {
         return root
     }
 
+    private fun setRecyclerViewItemTouchListener() : ItemTouchHelper {
+
+        //1
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                //3
+                val recyclerView = view?.findViewById<RecyclerView>(R.id.ls_groups)
+                val position = viewHolder.adapterPosition
+                val group = (recyclerView!!.adapter as GroupAdapter).getItem(position)
+                when(swipeDir) {
+                    ItemTouchHelper.LEFT -> {
+                        (activity as MainActivity).model.vc.fillView(context, activity,
+                            group)
+                        (recyclerView!!.adapter as GroupAdapter).notifyItemChanged(position)
+                    }
+                    ItemTouchHelper.RIGHT -> {
+                        if ((activity as MainActivity).model.remove(group) == 1) {
+                            (recyclerView!!.adapter as GroupAdapter).remove(position)
+                            (recyclerView!!.adapter as GroupAdapter).notifyItemRemoved(position)
+                        }
+                    }
+                }
+               // photosList.removeAt(position)
+              //  recyclerView.adapter!!.notifyItemRemoved(position)
+            }
+        }
+
+        //4
+        return ItemTouchHelper(itemTouchCallback)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem) =
         when (item.itemId) {
-            R.id.act_done -> {
+            R.id.act_add -> {
                 val group = group()
                 (activity as MainActivity).model.vc.fillModel(context, activity, group)
                 group.created_on = Date()
@@ -63,6 +100,22 @@ class GroupFragment : Fragment() {
                 // perhaps just hide the input field
                 group.name = ""
                (activity as MainActivity).model.vc.fillView(context, activity, group)
+                groupViewModel.setGroups((activity as MainActivity).model.load(
+                    null,
+                    rogatkin.mobile.app.mylinks.model.group::class.java,
+                    null
+                )!!)
+                true
+            }
+            R.id.act_done -> {
+                val group = group()
+                (activity as MainActivity).model.vc.fillModel(context, activity, group)
+                group.modified_on = Date()
+                (activity as MainActivity).model.save(group)
+                group.name = ""
+                group.id = 0
+                (activity as MainActivity).model.vc.fillView(context, activity, group)
+                // TODO Modify just one, no full refresh
                 groupViewModel.setGroups((activity as MainActivity).model.load(
                     null,
                     rogatkin.mobile.app.mylinks.model.group::class.java,
