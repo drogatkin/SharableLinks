@@ -1,4 +1,4 @@
-package rogatkin.mobile.app.mylinks.ui.notifications
+package rogatkin.mobile.app.mylinks.ui.dot
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

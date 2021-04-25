@@ -35,22 +35,4 @@ class MainActivity : AppCompatActivity() {
         return true;
     }
 
-   /*override fun onOptionsItemSelected(item: MenuItem) =
-        when (item.itemId) {
-        R.id.act_done -> {
-            val group = group()
-            model.vc.fillModel(this, this, group)
-            group.created_on = Date()
-            group.modified_on = group.created_on
-            model.save(group)
-            // perhaps just hide the input field
-            group.name = ""
-            model.vc.fillView(this, this, group)
-            // update list
-
-            true
-        } else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }*/
 }

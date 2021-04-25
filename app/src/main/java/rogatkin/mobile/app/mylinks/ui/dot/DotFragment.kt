@@ -1,4 +1,4 @@
-package rogatkin.mobile.app.mylinks.ui.notifications
+package rogatkin.mobile.app.mylinks.ui.dot
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -6,7 +6,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -72,11 +74,14 @@ class GroupFragment : Fragment() {
                         (activity as MainActivity).model.vc.fillView(context, activity,
                             group)
                         (recyclerView!!.adapter as GroupAdapter).notifyItemChanged(position)
+                        setFragmentResult("groupId", bundleOf("groupId" to group.id))
                     }
                     ItemTouchHelper.RIGHT -> {
                         if ((activity as MainActivity).model.remove(group) == 1) {
                             (recyclerView!!.adapter as GroupAdapter).remove(position)
                             (recyclerView!!.adapter as GroupAdapter).notifyItemRemoved(position)
+                        } else {
+                            (recyclerView!!.adapter as GroupAdapter).notifyItemChanged(position)
                         }
                     }
                 }
