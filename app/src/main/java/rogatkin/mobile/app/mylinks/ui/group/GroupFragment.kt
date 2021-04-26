@@ -6,9 +6,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,11 +16,15 @@ import androidx.recyclerview.widget.RecyclerView
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.group
+import rogatkin.mobile.app.mylinks.ui.line.LineViewModel
 import java.util.*
 
 class GroupFragment : Fragment() {
 
     private lateinit var groupViewModel: GroupViewModel
+
+    private val vm: LineViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,15 +76,16 @@ class GroupFragment : Fragment() {
                     ItemTouchHelper.LEFT -> {
                         (activity as MainActivity).model.vc.fillView(context, activity,
                             group)
-                        (recyclerView!!.adapter as GroupAdapter).notifyItemChanged(position)
-                        setFragmentResult("groupId", bundleOf("groupId" to group.id))
+                        (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
+                        //setFragmentResult("groupId", bundleOf("groupId" to group.id))
+                        vm.setLines(group)
                     }
                     ItemTouchHelper.RIGHT -> {
                         if ((activity as MainActivity).model.remove(group) == 1) {
-                            (recyclerView!!.adapter as GroupAdapter).remove(position)
-                            (recyclerView!!.adapter as GroupAdapter).notifyItemRemoved(position)
+                            (recyclerView.adapter as GroupAdapter).remove(position)
+                            (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
                         } else {
-                            (recyclerView!!.adapter as GroupAdapter).notifyItemChanged(position)
+                            (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
                         }
                     }
                 }

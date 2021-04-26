@@ -2,16 +2,18 @@ package rogatkin.mobile.app.mylinks.model;
 
 import java.util.Date;
 
+import rogatkin.mobile.app.mylinks.R;
 import rogatkin.mobile.data.pertusin.PresentA;
 import rogatkin.mobile.data.pertusin.StoreA;
 
 import static rogatkin.mobile.data.pertusin.PresentA.FieldType.Hidden;
 
-public class line {
-    @StoreA()
+public class line extends Id {
+    @StoreA(index=true)
+    @PresentA(required=true, viewFieldId= R.id.ed_linkname, listViewFieldId = R.id.tv_name)
     public String name;
     @StoreA()
-    @PresentA()
+    @PresentA(required=true, viewFieldId= R.id.ed_url)
     public String url;
     @StoreA()
     public Date accessed;

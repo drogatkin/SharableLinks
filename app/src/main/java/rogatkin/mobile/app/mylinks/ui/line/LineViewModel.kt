@@ -3,20 +3,27 @@ package rogatkin.mobile.app.mylinks.ui.line
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import rogatkin.mobile.app.mylinks.model.group
 import rogatkin.mobile.app.mylinks.model.line
 
 class LineViewModel : ViewModel() {
-    private val lines : MutableLiveData<List<line>> by lazy {
-        MutableLiveData<List<line>>().also {
-            loadLines()
-        }
+    private val line = MutableLiveData<group>()
+    private val dot = MutableLiveData<line>()
+
+    fun getLines(): LiveData<group> {
+        return line
     }
 
-    fun getLines(): LiveData<List<line>> {
-        return lines
+    fun setLines(group: group) {
+        line.value = group
     }
 
-    private fun loadLines() {
-        // Do an asynchronous operation to fetch groups.
+    fun getLink(): LiveData<line> {
+        return dot
     }
+
+    fun setLink(line: line) {
+        dot.value = line
+    }
+
 }

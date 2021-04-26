@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/navigation_groups"
         android:name="rogatkin.mobile.app.mylinks.ui.group.GroupFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_group"
         tools:layout="@layout/fragment_groups" />
 
     <fragment
         android:id="@+id/navigation_line"
         android:name="rogatkin.mobile.app.mylinks.ui.line.LineFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_line"
         tools:layout="@layout/fragment_line" />
 
     <fragment
         android:id="@+id/navigation_dot"
         android:name="rogatkin.mobile.app.mylinks.ui.dot.DotFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_dot"
         tools:layout="@layout/fragment_dot" />
 </navigation>

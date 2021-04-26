@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">My Links</string>
-    <string name="title_home">Groups</string>
-    <string name="title_dashboard">Line</string>
-    <string name="title_notifications">Dot</string>
+    <string name="title_group">Groups</string>
+    <string name="title_line">Line</string>
+    <string name="title_dot">Dot</string>
     <string name="lb_nogoups">No groups created</string>
     <string name="lb_nolinks">No links in the group</string>
-    <string name="ht_groupnane">Group name</string>
+    <string name="ht_groupname">Group name</string>
+    <string name="ht_dotname">Link name</string>
+    <string name="ht_url">Url</string>
     <string name="menu_add">Add</string>
     <string name="menu_ok">OK</string>
     <string name="menu_search">Search</string>

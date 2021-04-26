@@ -33,13 +33,13 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         try {
             if (r.id > 0) {
                 db.update(
-                    name, helper.asContentValues(r, false, "id"), "_id="
-                            + r.id, null
+                    name, helper.asContentValues(r, false, "id"), "_id="+
+                            r.id, null
                 )
             } else {
                 r.id = db.insert(
                     name, null,
-                    helper.asContentValues(r, false, "id")
+                    helper.asContentValues(r, false, "id", "created_on")
                 )
             }
         } finally {
