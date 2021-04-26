@@ -18,9 +18,17 @@ public class line extends Id {
     @StoreA()
     public Date accessed;
     @StoreA()
-    @PresentA()
+    @PresentA(viewFieldId= R.id.ed_description)
     public String description;
     @StoreA()
     @PresentA(presentType = Hidden)
     public long group_id;
+
+    public line clear() {
+        name = "";
+        url = "";
+        description = "";
+        group_id = 0;
+        return  this;
+    }
 }

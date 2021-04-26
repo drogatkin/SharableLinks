@@ -8,6 +8,7 @@
     <string name="ht_groupname">Group name</string>
     <string name="ht_dotname">Link name</string>
     <string name="ht_url">Url</string>
+    <string name="ht_description">Description</string>
     <string name="menu_add">Add</string>
     <string name="menu_ok">OK</string>
     <string name="menu_search">Search</string>

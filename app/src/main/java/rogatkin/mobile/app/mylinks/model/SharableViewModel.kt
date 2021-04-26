@@ -1,12 +1,10 @@
-package rogatkin.mobile.app.mylinks.ui.line
+package rogatkin.mobile.app.mylinks.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import rogatkin.mobile.app.mylinks.model.group
-import rogatkin.mobile.app.mylinks.model.line
 
-class LineViewModel : ViewModel() {
+class SharableViewModel : ViewModel() {
     private val line = MutableLiveData<group>()
     private val dot = MutableLiveData<line>()
 
@@ -25,5 +23,4 @@ class LineViewModel : ViewModel() {
     fun setLink(line: line) {
         dot.value = line
     }
-
 }

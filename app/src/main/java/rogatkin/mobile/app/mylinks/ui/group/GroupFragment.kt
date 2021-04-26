@@ -15,15 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
+import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.group
-import rogatkin.mobile.app.mylinks.ui.line.LineViewModel
 import java.util.*
 
 class GroupFragment : Fragment() {
 
     private lateinit var groupViewModel: GroupViewModel
 
-    private val vm: LineViewModel by activityViewModels()
+    private val vm: SharableViewModel by activityViewModels()
 
 
     override fun onCreateView(
