@@ -1,5 +1,7 @@
 package rogatkin.mobile.app.mylinks.ui.line
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,7 @@ import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.line
 import java.util.*
+
 
 class LineFragment : Fragment() {
 
@@ -69,27 +72,40 @@ class LineFragment : Fragment() {
             vm.setLines(group)
         }*/
 
-        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
                 //3
                 val recyclerView = view?.findViewById<RecyclerView>(R.id.ls_links)
                 val position = viewHolder.adapterPosition
                 val line = (recyclerView!!.adapter as LineFragment.LineAdapter).getItem(position)
-                when(swipeDir) {
+                when (swipeDir) {
                     ItemTouchHelper.LEFT -> {
-                       // (activity as MainActivity).model.vc.fillView(context, activity,
-                         //   line)
-                        (recyclerView.adapter as LineFragment.LineAdapter).notifyItemChanged(position)
+                        // (activity as MainActivity).model.vc.fillView(context, activity,
+                        //   line)
+                        (recyclerView.adapter as LineFragment.LineAdapter).notifyItemChanged(
+                            position
+                        )
                         vm.setLink(line)
                     }
                     ItemTouchHelper.RIGHT -> {
                         if ((activity as MainActivity).model.remove(line) == 1) {
                             (recyclerView.adapter as LineFragment.LineAdapter).remove(position)
-                            (recyclerView.adapter as LineFragment.LineAdapter).notifyItemRemoved(position)
+                            (recyclerView.adapter as LineFragment.LineAdapter).notifyItemRemoved(
+                                position
+                            )
                         } else {
-                            (recyclerView.adapter as LineFragment.LineAdapter).notifyItemChanged(position)
+                            (recyclerView.adapter as LineFragment.LineAdapter).notifyItemChanged(
+                                position
+                            )
                         }
                     }
                 }
@@ -117,19 +133,25 @@ class LineFragment : Fragment() {
 
         inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view),
             View.OnClickListener {
+            init {
+                view.setOnClickListener(this)
+            }
 
+            var urlText = ""
             fun update(element: line) {
                 when (element.name) {
                     null -> element.name = "not set"
                     "" -> "blank"
                 }
-
+                urlText = element.url
                 val ac = activity as MainActivity
                 ac.model.vc.fillView(ac, view, element, true)
             }
 
             override fun onClick(v: View?) {
-                TODO("Implement")
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(urlText)
+                activity!!.startActivity(i)
             }
 
         }
