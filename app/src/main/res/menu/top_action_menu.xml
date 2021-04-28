@@ -16,4 +16,9 @@
         android:id="@+id/act_done"
         android:icon="@drawable/ic_baseline_done_24"
         app:showAsAction="always"/>
+
+    <item android:title="@string/menu_setup"
+        android:id="@+id/act_setup"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="never"/>
 </menu>

@@ -1,10 +1,7 @@
 package rogatkin.mobile.app.mylinks.ui.group
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -57,8 +54,23 @@ class GroupFragment : Fragment() {
                     this.adapter?.notifyDataSetChanged()
                 }
             }
+            requireActivity().invalidateOptionsMenu()
         })
+
         return root
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        val group = group()
+        try {
+            (activity as MainActivity).model.vc.fillModel(context, activity, group)
+            menu.findItem(R.id.act_add).isVisible = group.id == 0L
+            menu.findItem(R.id.act_done).isVisible = !group.name.isEmpty()
+        } catch(iae:IllegalArgumentException) {
+            menu.findItem(R.id.act_add).setVisible(true)
+            menu.findItem(R.id.act_done).setVisible(false)
+        }
     }
 
     private fun setRecyclerViewItemTouchListener() : ItemTouchHelper {
@@ -73,15 +85,16 @@ class GroupFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val group = (recyclerView!!.adapter as GroupAdapter).getItem(position)
                 when(swipeDir) {
-                    ItemTouchHelper.LEFT -> {
+                    ItemTouchHelper.RIGHT -> {
                         (activity as MainActivity).model.vc.fillView(context, activity,
                             group)
                         (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
                         //setFragmentResult("groupId", bundleOf("groupId" to group.id))
                         vm.setLines(group)
+                        requireActivity().invalidateOptionsMenu()
                     }
-                    ItemTouchHelper.RIGHT -> {
-                        if ((activity as MainActivity).model.remove(group) == 1) {
+                    ItemTouchHelper.LEFT -> {
+                        if ((activity as MainActivity).model.removeGroup(group) == 1) {
                             (recyclerView.adapter as GroupAdapter).remove(position)
                             (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
                         } else {

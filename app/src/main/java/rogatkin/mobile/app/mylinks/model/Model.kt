@@ -95,4 +95,16 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         }
     }
 
+    fun removeGroup(gr:group) :Int{
+        val database = this.writableDatabase
+        return try {
+            database.delete("group_tb", "_id=? and NOT EXISTS (\n" +
+                    "    SELECT *\n" +
+                    "    FROM line\n" +
+                    "    WHERE group_id = group_tb._id)", arrayOf(""+gr.id))
+        } finally {
+            database.close()
+        }
+    }
+
 }

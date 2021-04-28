@@ -15,12 +15,12 @@ public class line extends Id {
     @StoreA()
     @PresentA(required=true, viewFieldId= R.id.ed_url)
     public String url;
-    @StoreA()
+    @StoreA(index=true)
     public Date accessed;
     @StoreA()
     @PresentA(viewFieldId= R.id.ed_description)
     public String description;
-    @StoreA()
+    @StoreA(index = true)
     @PresentA(presentType = Hidden)
     public long group_id;
 

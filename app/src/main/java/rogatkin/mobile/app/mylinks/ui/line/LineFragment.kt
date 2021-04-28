@@ -88,7 +88,7 @@ class LineFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val line = (recyclerView!!.adapter as LineFragment.LineAdapter).getItem(position)
                 when (swipeDir) {
-                    ItemTouchHelper.LEFT -> {
+                    ItemTouchHelper.RIGHT -> {
                         // (activity as MainActivity).model.vc.fillView(context, activity,
                         //   line)
                         (recyclerView.adapter as LineFragment.LineAdapter).notifyItemChanged(
@@ -96,7 +96,7 @@ class LineFragment : Fragment() {
                         )
                         vm.setLink(line)
                     }
-                    ItemTouchHelper.RIGHT -> {
+                    ItemTouchHelper.LEFT -> {
                         if ((activity as MainActivity).model.remove(line) == 1) {
                             (recyclerView.adapter as LineFragment.LineAdapter).remove(position)
                             (recyclerView.adapter as LineFragment.LineAdapter).notifyItemRemoved(
