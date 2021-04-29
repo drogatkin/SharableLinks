@@ -25,6 +25,7 @@ class DotFragment : Fragment() {
         setHasOptionsMenu(true)
         val root = inflater.inflate(R.layout.fragment_dot, container, false)
         val textView: TextView = root.findViewById(R.id.ed_linkname)
+        // TODO same for URL
         textView.addTextChangedListener(ChangeWacher(this))
         vm.getLink().observe(viewLifecycleOwner, Observer {
             (activity as MainActivity).model.vc.fillView(activity, root, it, false)
@@ -38,10 +39,11 @@ class DotFragment : Fragment() {
         val line = line()
         try {
             (activity as MainActivity).model.vc.fillModel(context, activity, line)
-            menu.findItem(R.id.act_add).isVisible = true//!line.name.isEmpty() && line.id == 0L && vm.getLines() != null && vm.getLines().value != null && vm.getLines().value!!.id != 0L
+            // TODO separate group and line ids
+            menu.findItem(R.id.act_add).isVisible = !line.name.isEmpty() && line.id > 0L// && vm.getLines().value != null && vm.getLines().value!!.id != 0L
             menu.findItem(R.id.act_done).isVisible = !line.name.isEmpty() && line.id > 0
         } catch(iae:IllegalArgumentException) {
-            menu.findItem(R.id.act_add).setVisible(true)
+            menu.findItem(R.id.act_add).setVisible(false)
             menu.findItem(R.id.act_done).setVisible(false)
         }
     }
