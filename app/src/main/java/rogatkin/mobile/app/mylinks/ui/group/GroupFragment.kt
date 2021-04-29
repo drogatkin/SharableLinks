@@ -14,6 +14,7 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.group
+import rogatkin.mobile.app.mylinks.ui.ChangeWacher
 import java.util.*
 
 class GroupFragment : Fragment() {
@@ -34,7 +35,8 @@ class GroupFragment : Fragment() {
             )
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
         setHasOptionsMenu(true)
-        // val textView: TextView = root.findViewById(R.id.tx_nogroups)
+        val textView: TextView = root.findViewById(R.id.ed_groupname)
+        textView.addTextChangedListener(ChangeWacher(this))
         with(root.findViewById<RecyclerView>(R.id.ls_groups)!!) {
             this.setLayoutManager(LinearLayoutManager(context))
             setRecyclerViewItemTouchListener().attachToRecyclerView(this)
@@ -66,9 +68,9 @@ class GroupFragment : Fragment() {
         try {
             (activity as MainActivity).model.vc.fillModel(context, activity, group)
             menu.findItem(R.id.act_add).isVisible = group.id == 0L
-            menu.findItem(R.id.act_done).isVisible = !group.name.isEmpty()
+            menu.findItem(R.id.act_done).isVisible = !group.name.isEmpty() && group.id > 0
         } catch(iae:IllegalArgumentException) {
-            menu.findItem(R.id.act_add).setVisible(true)
+            menu.findItem(R.id.act_add).setVisible(false)
             menu.findItem(R.id.act_done).setVisible(false)
         }
     }
@@ -102,8 +104,6 @@ class GroupFragment : Fragment() {
                         }
                     }
                 }
-               // photosList.removeAt(position)
-              //  recyclerView.adapter!!.notifyItemRemoved(position)
             }
         }
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -22,23 +23,18 @@ import java.util.*
 
 class LineFragment : Fragment() {
 
-    //private lateinit var lineViewModel: LineViewModel
-
     private val vm: SharableViewModel by activityViewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // lineViewModel =
-        //           ViewModelProvider(this).get(LineViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_line, container, false)
-
+        setHasOptionsMenu(true)
         vm.getLines().observe(viewLifecycleOwner, Observer {
             (activity as MainActivity).model.vc.fillView(activity, root, it, true)
-
+            requireActivity().invalidateOptionsMenu()
             with(root.findViewById<RecyclerView>(R.id.ls_links)) {
                 this.setLayoutManager(LinearLayoutManager(context))
                 val ln = line()
@@ -64,13 +60,6 @@ class LineFragment : Fragment() {
             }
         })
         vm.getLines().value?.let { vm.setLines(it) }
-        /*setFragmentResultListener("groupId") { requestKey, bundle ->
-            val group = group()
-            group.id = bundle.getLong("groupId")
-                (activity as MainActivity).model.load((activity as MainActivity).model.whereVals(group, "id"), group, "created_on")
-            (activity as MainActivity).model.vc.fillView(context, view, group, true)
-            vm.setLines(group)
-        }*/
 
         val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -113,6 +102,12 @@ class LineFragment : Fragment() {
         }
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(root.findViewById<RecyclerView>(R.id.ls_links))
         return root
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.act_add).isVisible = false
+        menu.findItem(R.id.act_done).isVisible = false
     }
 
     fun showEmpty(empty: Boolean) {
