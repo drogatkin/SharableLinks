@@ -1,7 +1,9 @@
 package rogatkin.mobile.app.mylinks
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -9,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.model.Model
+import rogatkin.mobile.app.mylinks.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,8 +26,11 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_groups, R.id.navigation_line, R.id.navigation_dot))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_groups, R.id.navigation_line, R.id.navigation_dot
+            )
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
@@ -35,4 +41,16 @@ class MainActivity : AppCompatActivity() {
         return true;
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) =
+        when (item.itemId) {
+            R.id.act_setup -> {
+                //startActivity(Intent(android.provider.Settings.ACTION_SETTINGS) .setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED))
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
 }

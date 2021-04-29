@@ -29,6 +29,7 @@ public class line extends Id {
         url = "";
         description = "";
         group_id = 0;
+        id = 0;
         return  this;
     }
 }

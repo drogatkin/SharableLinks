@@ -28,4 +28,6 @@ class ChangeWacher(val fragment: Fragment) : TextWatcher {
 
     override fun afterTextChanged(s: Editable) {
     }
+
+    fun reset() { prevState = false }
 }

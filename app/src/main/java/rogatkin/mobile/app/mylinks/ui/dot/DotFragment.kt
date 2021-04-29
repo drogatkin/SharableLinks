@@ -16,7 +16,7 @@ import java.util.*
 class DotFragment : Fragment() {
 
     private val vm: SharableViewModel by activityViewModels()
-
+    private val watcher = ChangeWacher(this)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,7 +26,7 @@ class DotFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_dot, container, false)
         val textView: TextView = root.findViewById(R.id.ed_linkname)
         // TODO same for URL
-        textView.addTextChangedListener(ChangeWacher(this))
+        textView.addTextChangedListener(watcher)
         vm.getLink().observe(viewLifecycleOwner, Observer {
             (activity as MainActivity).model.vc.fillView(activity, root, it, false)
             requireActivity().invalidateOptionsMenu()
@@ -36,13 +36,14 @@ class DotFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        val line = line()
         try {
-            (activity as MainActivity).model.vc.fillModel(context, activity, line)
-            // TODO separate group and line ids
-            menu.findItem(R.id.act_add).isVisible = !line.name.isEmpty() && line.id > 0L// && vm.getLines().value != null && vm.getLines().value!!.id != 0L
-            menu.findItem(R.id.act_done).isVisible = !line.name.isEmpty() && line.id > 0
-        } catch(iae:IllegalArgumentException) {
+            val realLine = line()
+            (activity as MainActivity).model.vc.fillModel(activity, view, realLine, false)
+            val line = vm.getLink().value
+            menu.findItem(R.id.act_add).isVisible =
+                line == null || line.group_id == 0L && vm.getLines().value != null && vm.getLines().value!!.id != 0L
+            menu.findItem(R.id.act_done).isVisible = line != null && line.group_id > 0
+        } catch (iae: IllegalArgumentException) {
             menu.findItem(R.id.act_add).setVisible(false)
             menu.findItem(R.id.act_done).setVisible(false)
         }
@@ -58,16 +59,17 @@ class DotFragment : Fragment() {
                 line.modified_on = line.created_on
                 (activity as MainActivity).model.save(line)
                 vm.setLink(line.clear())
+                watcher.reset()
                 true
             }
-            R.id.act_done ->
-            {
+            R.id.act_done -> {
                 val line = line()
                 (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
                 if (line.id > 0) {
                     line.modified_on = Date()
                     (activity as MainActivity).model.save(line)
                     vm.setLink(line.clear())
+                    watcher.reset()
                 }
                 true
             }
