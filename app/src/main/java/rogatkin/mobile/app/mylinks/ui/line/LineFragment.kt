@@ -145,7 +145,7 @@ class LineFragment : Fragment() {
 
             override fun onClick(v: View?) {
                 val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(urlText)
+                i.data = Uri.parse(urlText.trim())
                 activity!!.startActivity(i)
             }
 

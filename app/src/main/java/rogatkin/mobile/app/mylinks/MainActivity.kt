@@ -11,11 +11,22 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.model.Model
+import rogatkin.mobile.app.mylinks.model.setting
 import rogatkin.mobile.app.mylinks.ui.SettingsActivity
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.timerTask
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var model: Model
+
+    val scheduler = Timer()
+
+    companion object {
+        const val server_url_base =
+            "http://dmitriy-desktop:8080/weblinks"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +44,15 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        val settings = setting()
+        model.helper.loadPreferences(settings, false)
+        if (settings.check_periodic) {
+            scheduler.scheduleAtFixedRate(timerTask {
+
+            }, TimeUnit.MINUTES.toMillis(1),TimeUnit.MINUTES.toMillis(10))
+        } else
+            scheduler.cancel()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

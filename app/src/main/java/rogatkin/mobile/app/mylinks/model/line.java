@@ -9,6 +9,7 @@ import rogatkin.mobile.data.pertusin.StoreA;
 import static rogatkin.mobile.data.pertusin.PresentA.FieldType.Hidden;
 
 public class line extends Id {
+    //@WebA
     @StoreA(index=true)
     @PresentA(required=true, viewFieldId= R.id.ed_linkname, listViewFieldId = R.id.tv_name)
     public String name;

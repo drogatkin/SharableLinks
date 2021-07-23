@@ -3,18 +3,40 @@ package rogatkin.mobile.app.mylinks.ui
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
+import rogatkin.mobile.app.mylinks.MainActivity
+import rogatkin.mobile.app.mylinks.model.group
 
 class ChangeWacher(val fragment: Fragment) : TextWatcher {
-    var prevState = false
+    var isEmpty = true
+    var innerUpdt = false
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+        if (innerUpdt)
+            return
         when (s.isNotBlank()) {
-            true and !prevState -> {
-                fragment.requireActivity().invalidateOptionsMenu()
-                prevState = true
+            true  -> {
+                when (isEmpty) {
+                    true -> {
+                        fragment.requireActivity().invalidateOptionsMenu()
+                        isEmpty = false
+                    }
+                }
             }
-            false and prevState -> {
-                fragment.requireActivity().invalidateOptionsMenu()
-                prevState = false
+            false -> {
+                when (isEmpty) {
+                    false -> {
+                        val group = group()
+                        innerUpdt = true
+                        // TODO Replace with version updating only id
+                        (fragment.requireActivity() as MainActivity).model.vc.fillView(
+                            fragment.requireContext(),
+                            fragment.requireActivity(),
+                            group
+                        )
+                        innerUpdt = false
+                        fragment.requireActivity().invalidateOptionsMenu()
+                        isEmpty = true
+                    }
+                }
             }
         }
 
@@ -29,5 +51,5 @@ class ChangeWacher(val fragment: Fragment) : TextWatcher {
     override fun afterTextChanged(s: Editable) {
     }
 
-    fun reset() { prevState = false }
+    fun reset() { isEmpty = true }
 }
