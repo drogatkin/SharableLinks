@@ -5,7 +5,7 @@
     <string name="title_dot">Dot</string>
     <string name="lb_nogoups">No groups created</string>
     <string name="lb_nolinks">No links in the group</string>
-    <string name="lb_nogroupselected">No no group selected, swipe it left to</string>
+    <string name="lb_nogroupselected">No no group selected, swipe it right to</string>
     <string name="ht_groupname">Group name</string>
     <string name="ht_dotname">Link name</string>
     <string name="ht_url">Url</string>
@@ -27,4 +27,5 @@
     <string name="sync_summary_on">Automatically populate new links to the server and other devices
     </string>
     <string name="sync_summary_off">Do not use a synchronization server</string>
+    <string name="menu_sync">Sync</string>
 </resources>

@@ -10,13 +10,13 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.line
-import rogatkin.mobile.app.mylinks.ui.ChangeWacher
+import rogatkin.mobile.app.mylinks.ui.ChangeWatcher
 import java.util.*
 
 class DotFragment : Fragment() {
 
     private val vm: SharableViewModel by activityViewModels()
-    private val watcher = ChangeWacher(this)
+    private val watcher = ChangeWatcher(this)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

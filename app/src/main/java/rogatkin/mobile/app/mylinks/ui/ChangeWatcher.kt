@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.model.group
 
-class ChangeWacher(val fragment: Fragment) : TextWatcher {
+class ChangeWatcher(val fragment: Fragment) : TextWatcher {
     var isEmpty = true
     var innerUpdt = false
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {

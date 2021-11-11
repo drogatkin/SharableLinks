@@ -31,6 +31,7 @@ public class line extends Id {
         description = "";
         group_id = 0;
         id = 0;
+        created_on = modified_on = null;
         return  this;
     }
 }

@@ -7,10 +7,12 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import rogatkin.mobile.data.pertusin.DataAssistant
 import rogatkin.mobile.data.pertusin.UIAssistant
+import rogatkin.mobile.data.pertusin.WebAssistant
 
 class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
     val vc: UIAssistant by lazy { UIAssistant(ctx) }
     val helper = DataAssistant(ctx)
+    val web : WebAssistant by lazy { WebAssistant(ctx) }
     val TAG = Model::class.java.name
 
     override fun onCreate(db: SQLiteDatabase?) {

@@ -14,7 +14,7 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.group
-import rogatkin.mobile.app.mylinks.ui.ChangeWacher
+import rogatkin.mobile.app.mylinks.ui.ChangeWatcher
 import java.util.*
 
 class GroupFragment : Fragment() {
@@ -36,7 +36,7 @@ class GroupFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
         setHasOptionsMenu(true)
         val textView: TextView = root.findViewById(R.id.ed_groupname)
-        textView.addTextChangedListener(ChangeWacher(this))
+        textView.addTextChangedListener(ChangeWatcher(this))
         with(root.findViewById<RecyclerView>(R.id.ls_groups)!!) {
             this.setLayoutManager(LinearLayoutManager(context))
             setRecyclerViewItemTouchListener().attachToRecyclerView(this)

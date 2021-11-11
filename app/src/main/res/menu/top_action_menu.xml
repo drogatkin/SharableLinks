@@ -21,4 +21,9 @@
         android:id="@+id/act_setup"
         android:icon="@drawable/ic_baseline_settings_24"
         app:showAsAction="never"/>
+
+    <item android:title="@string/menu_sync"
+        android:id="@+id/act_sync"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="never"/>
 </menu>

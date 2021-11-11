@@ -9,8 +9,11 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.model.Model
+import rogatkin.mobile.app.mylinks.model.line
+import rogatkin.mobile.app.mylinks.model.lines
 import rogatkin.mobile.app.mylinks.model.setting
 import rogatkin.mobile.app.mylinks.ui.SettingsActivity
 import java.util.*
@@ -69,8 +72,25 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+            R.id.act_sync -> {
+                speakWhatHappened(null)
+                true
+            }
             else -> {
                 super.onOptionsItemSelected(item)
             }
         }
+
+    fun speakWhatHappened(since: Date?) {
+        // found all records changed from since, if null, then all
+// val links = model.load(null, line::class.java, null,  "id", "name", "url", "description")
+        val lines = lines()
+        lines.endpoint = PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
+        lines.lines = model.load(null, line::class.java, null,  "id", "name", "url", "description")?.toTypedArray()
+model.web.put(lines.lines, line(), { ls ->  lines.lines = model.web.putJSONArray(lines.response, ls, true)}
+    , false)
+
+        // update db with inserted global ids
+        // WebAssistant.Notifiable<lines>()
+    }
 }
