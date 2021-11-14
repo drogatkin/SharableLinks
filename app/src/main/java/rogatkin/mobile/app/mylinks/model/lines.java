@@ -6,8 +6,10 @@ import rogatkin.mobile.data.pertusin.WebA;
 
 
 public class lines {
-    @EndpointA( "webbee/Sync")
+    @EndpointA( "/sharelinks/webbee/Sync")
     public String endpoint;
+    @WebA(value="user-agent", header = true)
+    public String user_agent = "mobile:android"; // this will assure your json view
     @StoreA()
     public /*ArrayList<line>*/line[] lines;
 

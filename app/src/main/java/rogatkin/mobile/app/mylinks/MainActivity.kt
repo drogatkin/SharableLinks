@@ -86,8 +86,11 @@ class MainActivity : AppCompatActivity() {
 // val links = model.load(null, line::class.java, null,  "id", "name", "url", "description")
         val lines = lines()
         lines.endpoint = PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
-        lines.lines = model.load(null, line::class.java, null,  "id", "name", "url", "description")?.toTypedArray()
-model.web.put(lines.lines, line(), { ls ->  lines.lines = model.web.putJSONArray(lines.response, ls, true)}
+        lines.lines = model.load(null, line::class.java, null,  "group_id", "created_on")?.toTypedArray()
+        // "user-agent" header should be set to "mobile:android" ...
+model.web.put(lines.lines, lines, { ls ->  lines.lines = model.web.putJSONArray(ls.response, line(), false)
+                                   // store lines back to db which where changed
+    }
     , false)
 
         // update db with inserted global ids
