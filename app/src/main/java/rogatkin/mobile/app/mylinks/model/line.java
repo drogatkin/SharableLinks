@@ -15,7 +15,7 @@ public class line extends Id {
     @PresentA(required=true, viewFieldId= R.id.ed_linkname, listViewFieldId = R.id.tv_name)
     public String name;
     @StoreA()
-    @WebA
+    @WebA("link")
     @PresentA(required=true, viewFieldId= R.id.ed_url)
     public String url;
     @StoreA(index=true)

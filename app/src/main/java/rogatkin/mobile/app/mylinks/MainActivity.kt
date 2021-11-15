@@ -2,6 +2,7 @@ package rogatkin.mobile.app.mylinks
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val server_url_base =
             "http://dmitriy-desktop:8080/weblinks"
+        const val TAG = "Links"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         if (settings.check_periodic) {
             scheduler.scheduleAtFixedRate(timerTask {
 
-            }, TimeUnit.MINUTES.toMillis(1),TimeUnit.MINUTES.toMillis(10))
+            }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(10))
         } else
             scheduler.cancel()
 
@@ -85,15 +87,22 @@ class MainActivity : AppCompatActivity() {
         // found all records changed from since, if null, then all
 // val links = model.load(null, line::class.java, null,  "id", "name", "url", "description")
         val lines = lines()
-        lines.endpoint = PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
-        lines.lines = model.load(null, line::class.java, null,  "group_id", "created_on")?.toTypedArray()
+        lines.endpoint =
+            PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
+        lines.lines =
+            model.load(null, line::class.java, null, "group_id", "created_on")?.toTypedArray()
         // "user-agent" header should be set to "mobile:android" ...
-model.web.put(lines.lines, lines, { ls ->  lines.lines = model.web.putJSONArray(ls.response, line(), false)
-                                   // store lines back to db which where changed
-    }
-    , false)
-
-        // update db with inserted global ids
-        // WebAssistant.Notifiable<lines>()
+        model.web.put(lines.lines, lines, { ls ->
+            lines.lines = model.web.putJSONArray(ls.response, line(), true)
+            // store lines back to db which were changed
+            lines.lines.forEach {
+                it.global_id = it.global_id - it.id
+                it.id = it.id + it.global_id
+                it.global_id =  - it.global_id + it.id
+                it.group_id = 1
+                Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
+                model.save(it)
+            }
+        }, false)
     }
 }
