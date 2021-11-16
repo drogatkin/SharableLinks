@@ -101,7 +101,8 @@ class MainActivity : AppCompatActivity() {
                 it.global_id =  - it.global_id + it.id
                 it.group_id = 1
                 Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
-                model.save(it)
+                if (model.validate(it))
+                     model.save(it,"group_id")
             }
         }, false)
     }

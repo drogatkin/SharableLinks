@@ -91,6 +91,7 @@ class LineFragment : Fragment() {
                             (recyclerView.adapter as LineFragment.LineAdapter).notifyItemRemoved(
                                 position
                             )
+                            // clear current dot
                         } else {
                             (recyclerView.adapter as LineFragment.LineAdapter).notifyItemChanged(
                                 position

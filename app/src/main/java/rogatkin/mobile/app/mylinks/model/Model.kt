@@ -29,24 +29,35 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         onCreate(db)
     }
 
-    fun save(r: Id) {
+    fun save(r: Id, vararg extras: String) {
         val db = writableDatabase
         val name = helper.resolveStoreName(r.javaClass)
         try {
             if (r.id > 0) {
                 db.update(
-                    name, helper.asContentValues(r, false, "id"), "_id="+
+                    name, helper.asContentValues(r, false, *merge(arrayOf("id", "created_on"),
+                        extras as Array<String>
+                    )), "_id="+
                             r.id, null
                 )
             } else {
                 r.id = db.insert(
                     name, null,
-                    helper.asContentValues(r, false, "id", "created_on")
+                    helper.asContentValues(r, false, "id" )
                 )
             }
         } finally {
             db.close()
         }
+    }
+
+    fun validate(data: line) : Boolean {
+        when {
+            data.group_id < 1 -> data.group_id = 1
+            data.name.isBlank() -> return false
+            data.url.isBlank() or !data.url.startsWith("http") -> return false
+        }
+        return true
     }
 
     fun <T> load(
@@ -109,4 +120,19 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         }
     }
 
+    fun addFields() {
+
+    }
+    fun <T> asList(vararg input: T): List<T> {
+        val result = ArrayList<T>()
+        for (item in input) // input is an Array
+            result.add(item)
+        return result
+    }
+
+    fun merge(arr: Array<String>, elements: Array<String>): Array<String> {
+        val list: MutableList<String> = arr.toMutableList()
+        list.addAll(elements)
+        return list.toTypedArray()
+    }
 }
