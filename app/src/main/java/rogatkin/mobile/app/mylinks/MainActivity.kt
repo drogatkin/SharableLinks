@@ -1,5 +1,6 @@
 package rogatkin.mobile.app.mylinks
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.act_sync -> {
-                speakWhatHappened(null)
+                speakWhatHappened()
                 true
             }
             else -> {
@@ -83,14 +84,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    fun speakWhatHappened(since: Date?) {
+    fun speakWhatHappened() {
         // found all records changed from since, if null, then all
 // val links = model.load(null, line::class.java, null,  "id", "name", "url", "description")
         val lines = lines()
+        val since = PreferenceManager.getDefaultSharedPreferences(this).getLong("time", 1000) / 1000 // some trick to get value in seconds
+        val filter = ContentValues()
+        filter.put(">modified_on", since)
+        lines.lines =
+            model.load(filter, line::class.java, null, "group_id", "created_on")?.toTypedArray()
+        if (lines.lines.size == 0)
+            return
         lines.endpoint =
             PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
-        lines.lines =
-            model.load(null, line::class.java, null, "group_id", "created_on")?.toTypedArray()
         // "user-agent" header should be set to "mobile:android" ...
         model.web.put(lines.lines, lines, { ls ->
             lines.lines = model.web.putJSONArray(ls.response, line(), true)
@@ -98,12 +104,15 @@ class MainActivity : AppCompatActivity() {
             lines.lines.forEach {
                 it.global_id = it.global_id - it.id
                 it.id = it.id + it.global_id
-                it.global_id =  - it.global_id + it.id
+                it.global_id = -it.global_id + it.id
                 it.group_id = 1
+                it.modified_on = Date()
                 Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
                 if (model.validate(it))
-                     model.save(it,"group_id")
+                    model.save(it, "group_id")
             }
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putLong("time", Date().getTime()).apply()
         }, false)
     }
 }

@@ -120,9 +120,6 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         }
     }
 
-    fun addFields() {
-
-    }
     fun <T> asList(vararg input: T): List<T> {
         val result = ArrayList<T>()
         for (item in input) // input is an Array
