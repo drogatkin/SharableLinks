@@ -16,7 +16,7 @@ public class line extends Id {
     public String name;
     @StoreA()
     @WebA("link")
-    @PresentA(required=true, viewFieldId= R.id.ed_url)
+    @PresentA(required=true, viewFieldId= R.id.ed_url,normalize="t")
     public String url;
     @StoreA(index=true)
     public Date accessed;

@@ -55,7 +55,7 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         when {
             data.group_id < 1 -> data.group_id = 1
             data.name.isBlank() -> return false
-            data.url.isBlank() or !data.url.startsWith("http") -> return false
+            data.url.isBlank() || !data.url.startsWith("http") -> return false
         }
         return true
     }

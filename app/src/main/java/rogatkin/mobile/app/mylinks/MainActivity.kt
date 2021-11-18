@@ -13,10 +13,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import rogatkin.mobile.app.mylinks.model.Model
-import rogatkin.mobile.app.mylinks.model.line
-import rogatkin.mobile.app.mylinks.model.lines
-import rogatkin.mobile.app.mylinks.model.setting
+import rogatkin.mobile.app.mylinks.model.*
 import rogatkin.mobile.app.mylinks.ui.SettingsActivity
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -93,10 +90,12 @@ class MainActivity : AppCompatActivity() {
         filter.put(">modified_on", since)
         lines.lines =
             model.load(filter, line::class.java, null, "group_id", "created_on")?.toTypedArray()
-        if (lines.lines.size == 0)
+        // if no changes on our side, they still can be on the server
+        if (lines.lines.size == 0 && false)
             return
         lines.endpoint =
             PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
+        lines.modifiedSince = Date(since * 100)
         // "user-agent" header should be set to "mobile:android" ...
         model.web.put(lines.lines, lines, { ls ->
             lines.lines = model.web.putJSONArray(ls.response, line(), true)
@@ -105,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 it.global_id = it.global_id - it.id
                 it.id = it.id + it.global_id
                 it.global_id = -it.global_id + it.id
-                it.group_id = 1
+                it.group_id = 1 // not changing, but just in case
                 it.modified_on = Date()
                 Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
                 if (model.validate(it))
@@ -114,5 +113,12 @@ class MainActivity : AppCompatActivity() {
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                 .putLong("time", Date().getTime()).apply()
         }, false)
+    }
+
+    fun getWhatHappened() {
+        val back = linnes_back(PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base))
+        model.web.get(back, {
+            val lines = model.web.putJSONArray(it.response, line(), true)
+        })
     }
 }
