@@ -3,6 +3,7 @@ package rogatkin.mobile.app.mylinks
 import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
 
     val scheduler = Timer()
 
+    var android_id : String? = null
+
     companion object {
         const val server_url_base =
             "http://dmitriy-desktop:8080/weblinks"
@@ -33,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+            Settings.Secure.ANDROID_ID)
         model = Model(this)
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -97,6 +102,7 @@ class MainActivity : AppCompatActivity() {
             PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
         lines.modifiedSince = Date(since * 100)
         // "user-agent" header should be set to "mobile:android" ...
+        lines.user_agent += ":" + android_id  // can be app specific id, not a device
         model.web.put(lines.lines, lines, { ls ->
             lines.lines = model.web.putJSONArray(ls.response, line(), true)
             // store lines back to db which were changed
