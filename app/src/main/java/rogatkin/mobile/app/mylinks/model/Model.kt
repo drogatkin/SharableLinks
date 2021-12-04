@@ -2,6 +2,7 @@ package rogatkin.mobile.app.mylinks.model
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
@@ -16,7 +17,7 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
     val TAG = Model::class.java.name
 
     override fun onCreate(db: SQLiteDatabase?) {
-        Log.d(TAG, "Creating: " + "db");
+        Log.d(TAG, "Creating: " + "db")
 
         db!!.execSQL(helper.getCreateQuery(group::class.java))
         db.execSQL(helper.getCreateQuery(line::class.java))
@@ -35,17 +36,23 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
         try {
             if (r.id > 0) {
                 db.update(
-                    name, helper.asContentValues(r, false, *merge(arrayOf("id", "created_on"),
-                        extras as Array<String>
-                    )), "_id="+
+                    name, helper.asContentValues(
+                        r, false, *merge(
+                            arrayOf("id", "created_on"),
+                            extras as Array<String>
+                        )
+                    ), "_id=" +
                             r.id, null
                 )
             } else {
-                r.id = db.insert(
+                // TODO update or insert for a table with global_id
+                r.id = db.replaceOrThrow(
                     name, null,
-                    helper.asContentValues(r, false, "id" )
+                    helper.asContentValues(r, false, "id")
                 )
             }
+        } catch(se: SQLException) {
+            Log.e(TAG, "An error in saving: " + se, se)
         } finally {
             db.close()
         }

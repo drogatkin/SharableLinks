@@ -36,8 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
-            Settings.Secure.ANDROID_ID)
+        initID( )
+
         model = Model(this)
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -61,6 +61,21 @@ class MainActivity : AppCompatActivity() {
         } else
             scheduler.cancel()
 
+    }
+
+    private fun initID() {
+        // when app reistalled for some reason, it should act as non existent in the global db
+        var salt = PreferenceManager.getDefaultSharedPreferences(this).getInt("SALT", 0)
+        if (salt == 0) {
+            salt = getRandomNumber(1004, 9999)
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("SALT", salt)
+        }
+        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+            Settings.Secure.ANDROID_ID) + "-" + salt
+    }
+
+    fun getRandomNumber(min: Int, max: Int): Int {
+        return Random().nextInt((max - min) + 1) + min
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -100,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             return
         lines.endpoint =
             PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
-        lines.modifiedSince = Date(since * 100)
+        lines.modifiedSince = Date(since * 1000)
         // "user-agent" header should be set to "mobile:android" ...
         lines.user_agent += ":" + android_id  // can be app specific id, not a device
         model.web.put(lines.lines, lines, { ls ->
