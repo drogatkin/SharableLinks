@@ -115,7 +115,9 @@ class MainActivity : AppCompatActivity() {
             return
         lines.endpoint =
             PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
+
         lines.modifiedSince = Date(since * 1000)
+       // lines.modifiedSince = Date(1 * 1000) // debug, all always
         // "user-agent" header should be set to "mobile:android" ...
         lines.user_agent += ":" + android_id  // can be app specific id, not a device
         model.web.put(lines.lines, lines, { ls ->
