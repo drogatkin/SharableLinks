@@ -26,6 +26,6 @@
     <string name="host_title">Server URL</string>
     <string name="sync_summary_on">Automatically populate new links to the server and other devices
     </string>
-    <string name="sync_summary_off">Do not use a synchronization server</string>
+    <string name="sync_summary_off">Do not use a synchronization with a server</string>
     <string name="menu_sync">Sync</string>
 </resources>

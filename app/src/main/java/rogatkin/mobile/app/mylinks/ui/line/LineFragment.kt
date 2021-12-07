@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
@@ -84,6 +85,7 @@ class LineFragment : Fragment() {
                             position
                         )
                         vm.setLink(line)
+                        activity?.findViewById<BottomNavigationView>(R.id.nav_view)?.setSelectedItemId(R.id.navigation_dot)
                     }
                     ItemTouchHelper.LEFT -> {
                         if ((activity as MainActivity).model.remove(line) == 1) {

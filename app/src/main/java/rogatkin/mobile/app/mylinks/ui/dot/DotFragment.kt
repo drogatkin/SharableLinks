@@ -10,6 +10,7 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.line
+import rogatkin.mobile.app.mylinks.model.setting
 import rogatkin.mobile.app.mylinks.ui.ChangeWatcher
 import java.util.*
 
@@ -54,10 +55,12 @@ class DotFragment : Fragment() {
             R.id.act_add -> {
                 val line = line()
                 (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
+                line.id = 0 // add a record
                 line.group_id = vm.getLines().value!!.id
                 line.created_on = Date()
                 line.modified_on = line.created_on
                 (activity as MainActivity).model.save(line)
+                sync()
                 vm.setLink(line.clear())
                 watcher.reset()
                 true
@@ -68,6 +71,7 @@ class DotFragment : Fragment() {
                 if (line.id > 0) {
                     line.modified_on = Date()
                     (activity as MainActivity).model.save(line)
+                    sync()
                     vm.setLink(line.clear())
                     watcher.reset()
                 }
@@ -77,5 +81,12 @@ class DotFragment : Fragment() {
                 super.onOptionsItemSelected(item)
             }
         }
+
+    fun sync() {
+        val settings = setting()
+        (activity as MainActivity).model.helper.loadPreferences(settings, false)
+        if (settings.sync_enabled and "manual".equals(settings.sync_mode))
+            (activity as MainActivity).speakWhatHappened()
+    }
 
 }

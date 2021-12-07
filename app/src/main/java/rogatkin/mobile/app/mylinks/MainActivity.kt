@@ -28,15 +28,20 @@ class MainActivity : AppCompatActivity() {
 
     var android_id : String? = null
 
+    //lateinit var mHandler: Handler
+
     companion object {
         const val server_url_base =
             "http://dmitriy-desktop:8080/weblinks"
         const val TAG = "Links"
+
+        const val interval = 30L
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initID( )
+       // mHandler = Handler(Looper.getMainLooper())
 
         model = Model(this)
         setContentView(R.layout.activity_main)
@@ -54,10 +59,11 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         val settings = setting()
         model.helper.loadPreferences(settings, false)
-        if (settings.check_periodic) {
+        //settings.aname = getDefaultSharedPreferencesName(applicationContext)
+        if (settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
             scheduler.scheduleAtFixedRate(timerTask {
-
-            }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(10))
+                speakWhatHappened()
+            }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(interval))
         } else
             scheduler.cancel()
 

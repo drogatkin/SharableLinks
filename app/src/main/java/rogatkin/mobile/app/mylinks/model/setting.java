@@ -1,6 +1,16 @@
 package rogatkin.mobile.app.mylinks.model;
 
+import rogatkin.mobile.data.pertusin.StoreA;
+
+@StoreA(storeName = "rogatkin.mobile.app.mylinks_preferences")
 public class setting {
 
-    public boolean check_periodic;
+    @StoreA(storeName = "sync")
+    public boolean sync_enabled;
+    @StoreA(storeName = "mode")
+    public String sync_mode;
+    @StoreA(storeName = "host")
+    public String server_name;
+    @StoreA
+    public String token;
 }
