@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         Log.d(TAG, "key "+key+"changed")
         when(key) {
-            "sync" , "mode" -> {
+            "sync" , "mode", "host" -> {
                 periodic()
             }
         }
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val settings = setting()
         model.helper.loadPreferences(settings, false)
         //settings.aname = getDefaultSharedPreferencesName(applicationContext)
-        if (settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
+        if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
             scheduler.scheduleAtFixedRate(timerTask {
                 speakWhatHappened()
             }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(interval))

@@ -9,8 +9,6 @@ import android.util.Log
 import rogatkin.mobile.data.pertusin.DataAssistant
 import rogatkin.mobile.data.pertusin.UIAssistant
 import rogatkin.mobile.data.pertusin.WebAssistant
-import java.util.*
-import kotlin.collections.ArrayList
 
 class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
     val vc: UIAssistant by lazy { UIAssistant(ctx) }
@@ -23,11 +21,7 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
 
         db!!.execSQL(helper.getCreateQuery(group::class.java))
         db.execSQL(helper.getCreateQuery(line::class.java))
-        // insert first group
-        val gr = group()
-        gr.name = "All links"
-        gr.created_on = Date()
-        save(gr)
+        db.execSQL("insert into group_tb (name, created_on, modified_on) values('All links', TIME('now'), TIME('now'))")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
