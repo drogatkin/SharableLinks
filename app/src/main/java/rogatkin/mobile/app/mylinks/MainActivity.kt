@@ -2,6 +2,7 @@ package rogatkin.mobile.app.mylinks
 
 import android.content.ContentValues
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -20,7 +21,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timerTask
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     lateinit var model: Model
 
@@ -57,16 +58,8 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        val settings = setting()
-        model.helper.loadPreferences(settings, false)
-        //settings.aname = getDefaultSharedPreferencesName(applicationContext)
-        if (settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
-            scheduler.scheduleAtFixedRate(timerTask {
-                speakWhatHappened()
-            }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(interval))
-        } else
-            scheduler.cancel()
-
+         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
+        periodic()
     }
 
     private fun initID() {
@@ -149,5 +142,26 @@ class MainActivity : AppCompatActivity() {
         model.web.get(back, {
             val lines = model.web.putJSONArray(it.response, line(), true)
         })
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        Log.d(TAG, "key "+key+"changed")
+        when(key) {
+            "sync" , "mode" -> {
+                periodic()
+            }
+        }
+    }
+
+    fun periodic() {
+        val settings = setting()
+        model.helper.loadPreferences(settings, false)
+        //settings.aname = getDefaultSharedPreferencesName(applicationContext)
+        if (settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
+            scheduler.scheduleAtFixedRate(timerTask {
+                speakWhatHappened()
+            }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(interval))
+        } else
+            scheduler.cancel()
     }
 }
