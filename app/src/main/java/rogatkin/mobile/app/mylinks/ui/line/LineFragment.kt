@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
@@ -149,7 +150,11 @@ class LineFragment : Fragment() {
             override fun onClick(v: View?) {
                 val i = Intent(Intent.ACTION_VIEW)
                 i.data = Uri.parse(urlText.trim())
-                activity!!.startActivity(i)
+                try {
+                    activity!!.startActivity(i)
+                } catch (e: Exception) {
+                    Snackbar.make(view, "Exception: "+e, 10*1000).show()
+                }
             }
 
         }

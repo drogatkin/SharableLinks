@@ -10,6 +10,7 @@ import rogatkin.mobile.data.pertusin.WebA;
 import static rogatkin.mobile.data.pertusin.PresentA.FieldType.Hidden;
 
 public class line extends Id {
+    //final static String URL_PAT = android.util.Patterns.WEB_URL.pattern();
     @WebA
     @StoreA(index=true)
     @PresentA(required=true, viewFieldId= R.id.ed_linkname, listViewFieldId = R.id.tv_name)

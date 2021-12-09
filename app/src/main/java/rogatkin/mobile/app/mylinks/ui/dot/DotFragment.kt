@@ -2,10 +2,12 @@ package rogatkin.mobile.app.mylinks.ui.dot
 
 import android.os.Bundle
 import android.view.*
+import android.webkit.URLUtil
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
@@ -55,25 +57,47 @@ class DotFragment : Fragment() {
             R.id.act_add -> {
                 val line = line()
                 (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
-                line.id = 0 // add a record
-                line.group_id = vm.getLines().value!!.id
-                line.created_on = Date()
-                line.modified_on = line.created_on
-                (activity as MainActivity).model.save(line)
-                sync()
-                vm.setLink(line.clear())
-                watcher.reset()
+                // TODO fillModel has to do validation, as for now
+                if (!URLUtil.isValidUrl(line.url)) {
+                    view?.let {
+                        Snackbar.make(
+                            it,
+                            getResources().getString(R.string.err_invalidurl),
+                            10 * 1000
+                        ).show()
+                    }
+                } else {
+                    line.id = 0 // add a record
+                    line.group_id = vm.getLines().value!!.id
+                    line.created_on = Date()
+                    line.modified_on = line.created_on
+                    (activity as MainActivity).model.save(line)
+                    sync()
+                    vm.setLink(line.clear())
+                    watcher.reset()
+                }
                 true
             }
             R.id.act_done -> {
                 val line = line()
                 (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
-                if (line.id > 0) {
-                    line.modified_on = Date()
-                    (activity as MainActivity).model.save(line)
-                    sync()
-                    vm.setLink(line.clear())
-                    watcher.reset()
+                // TODO fillModel has to do validation, as for now
+                if (!URLUtil.isValidUrl(line.url)) {
+                    view?.let {
+                        Snackbar.make(
+                            it,
+                            getResources().getString(R.string.err_invalidurl),
+                            10 * 1000
+                        ).show()
+                    }
+                } else {
+                    if (line.id > 0) {
+                        line.modified_on = Date()
+                        (activity as MainActivity).model.save(line)
+                        sync()
+                        vm.setLink(line.clear())
+                        watcher.reset()
+                    }
                 }
                 true
             }
