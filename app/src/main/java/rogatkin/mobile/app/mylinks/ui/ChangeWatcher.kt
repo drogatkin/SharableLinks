@@ -38,7 +38,7 @@ class ChangeWatcher(val fragment: Fragment) : TextWatcher {
                     }
                 }
             }
-        }
+         }
 
     }
 

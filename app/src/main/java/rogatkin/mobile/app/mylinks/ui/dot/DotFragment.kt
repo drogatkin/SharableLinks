@@ -2,7 +2,7 @@ package rogatkin.mobile.app.mylinks.ui.dot
 
 import android.os.Bundle
 import android.view.*
-import android.webkit.URLUtil
+import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +30,10 @@ class DotFragment : Fragment() {
         val textView: TextView = root.findViewById(R.id.ed_linkname)
         // TODO same for URL
         textView.addTextChangedListener(watcher)
+        val linkView = root.findViewById<EditText>(R.id.ed_url)
+        linkView.setOnFocusChangeListener{_, hasFocus ->
+            if (!hasFocus)
+                requireActivity().invalidateOptionsMenu() }
         vm.getLink().observe(viewLifecycleOwner, Observer {
             (activity as MainActivity).model.vc.fillView(activity, root, it, false)
             requireActivity().invalidateOptionsMenu()
@@ -56,17 +60,8 @@ class DotFragment : Fragment() {
         when (item.itemId) {
             R.id.act_add -> {
                 val line = line()
-                (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
-                // TODO fillModel has to do validation, as for now
-                if (!URLUtil.isValidUrl(line.url)) {
-                    view?.let {
-                        Snackbar.make(
-                            it,
-                            getResources().getString(R.string.err_invalidurl),
-                            10 * 1000
-                        ).show()
-                    }
-                } else {
+                try {
+                    (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
                     line.id = 0 // add a record
                     line.group_id = vm.getLines().value!!.id
                     line.created_on = Date()
@@ -75,14 +70,7 @@ class DotFragment : Fragment() {
                     sync()
                     vm.setLink(line.clear())
                     watcher.reset()
-                }
-                true
-            }
-            R.id.act_done -> {
-                val line = line()
-                (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
-                // TODO fillModel has to do validation, as for now
-                if (!URLUtil.isValidUrl(line.url)) {
+                } catch (e: Exception) {
                     view?.let {
                         Snackbar.make(
                             it,
@@ -90,13 +78,27 @@ class DotFragment : Fragment() {
                             10 * 1000
                         ).show()
                     }
-                } else {
+                }
+                true
+            }
+            R.id.act_done -> {
+                val line = line()
+                try {
+                    (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
                     if (line.id > 0) {
                         line.modified_on = Date()
                         (activity as MainActivity).model.save(line)
                         sync()
                         vm.setLink(line.clear())
                         watcher.reset()
+                    }
+                } catch (e: Exception) {
+                    view?.let {
+                        Snackbar.make(
+                            it,
+                            getResources().getString(R.string.err_invalidurl),
+                            10 * 1000
+                        ).show()
                     }
                 }
                 true
@@ -109,7 +111,7 @@ class DotFragment : Fragment() {
     fun sync() {
         val settings = setting()
         (activity as MainActivity).model.helper.loadPreferences(settings, false)
-        if (settings.sync_enabled and "manual".equals(settings.sync_mode))
+        if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and "manual".equals(settings.sync_mode))
             (activity as MainActivity).speakWhatHappened()
     }
 

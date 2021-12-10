@@ -142,7 +142,8 @@ class LineFragment : Fragment() {
                     null -> element.name = "not set"
                     "" -> "blank"
                 }
-                urlText = element.url
+                if (element.url != null)
+                    urlText = element.url
                 val ac = activity as MainActivity
                 ac.model.vc.fillView(ac, view, element, true)
             }
