@@ -119,6 +119,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
        // lines.modifiedSince = Date(1 * 1000) // debug, all always
         // "user-agent" header should be set to "mobile:android" ...
         lines.user_agent += ":" + android_id  // can be app specific id, not a device
+        lines.token = PreferenceManager.getDefaultSharedPreferences(this).getString("token", null)
+        if (lines.token.isNullOrBlank())
+            lines.token = null
+        else
+            lines.token = "s_token " + lines.token
         model.web.put(lines.lines, lines, { ls ->
             lines.lines = model.web.putJSONArray(ls.response, line(), true)
             // store lines back to db which were changed

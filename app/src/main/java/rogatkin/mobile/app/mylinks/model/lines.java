@@ -12,6 +12,8 @@ public class lines {
     public String endpoint;
     @WebA(value="user-agent", header = true)
     public String user_agent = "mobile:android"; // this will assure your json view
+    @WebA(value="Authorization",header=true)
+    public String token; // null makes the header not set
     @WebA(header=true, value="If-Modified-Since")
     public Date modifiedSince;
     @StoreA()

@@ -11,6 +11,6 @@ public class setting {
     public String sync_mode;
     @StoreA(storeName = "host")
     public String server_name;
-    @StoreA
+    @StoreA(storeName = "token")
     public String token;
 }
