@@ -1,9 +1,11 @@
 package rogatkin.mobile.app.mylinks.ui.line
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.*
 import android.view.LayoutInflater
 import android.widget.*
@@ -145,10 +147,22 @@ class LineFragment : Fragment() {
                     urlText = element.url
                 val ac = activity as MainActivity
                 ac.model.vc.fillView(ac, view, element, true)
-                if (element.highlight)
-                    view.setBackgroundColor(Color.parseColor("#F2F2F2"))
-                else
-                    view.setBackgroundColor(Color.WHITE)
+                if (element.highlight) {
+                    when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                        Configuration.UI_MODE_NIGHT_YES -> {view.setBackgroundColor(Color.parseColor("#2F2F2F"))}
+                        Configuration.UI_MODE_NIGHT_NO -> {view.setBackgroundColor(Color.parseColor("#F2F2F2"))}
+                        Configuration.UI_MODE_NIGHT_UNDEFINED -> {view.setBackgroundColor(Color.parseColor("#F2F2F2"))}
+                    }
+
+                } else {
+                    val a = TypedValue()
+                    context!!.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true)
+                    if (a.type >= TypedValue.TYPE_FIRST_COLOR_INT && a.type <= TypedValue.TYPE_LAST_COLOR_INT)
+                        view.setBackgroundColor(a.data)
+                    else
+                        view.setBackgroundResource(a.data)
+                }
+
             }
 
             override fun onClick(v: View?) {
