@@ -32,6 +32,8 @@ public class line extends Id {
     @PresentA(presentType = Hidden)
     public long group_id;
 
+    public boolean highlight;
+
     public line clear() {
         name = "";
         url = "";

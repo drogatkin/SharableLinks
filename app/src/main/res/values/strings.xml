@@ -29,4 +29,5 @@
     <string name="sync_summary_off">Do not use a synchronization with a server</string>
     <string name="menu_sync">Sync</string>
     <string name="err_invalidurl">Invalid URL</string>
+    <string name="lb_search">Search</string>
 </resources>

@@ -1,13 +1,12 @@
 package rogatkin.mobile.app.mylinks.ui.line
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.view.*
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -146,6 +145,10 @@ class LineFragment : Fragment() {
                     urlText = element.url
                 val ac = activity as MainActivity
                 ac.model.vc.fillView(ac, view, element, true)
+                if (element.highlight)
+                    view.setBackgroundColor(Color.parseColor("#F2F2F2"))
+                else
+                    view.setBackgroundColor(Color.WHITE)
             }
 
             override fun onClick(v: View?) {
@@ -184,4 +187,35 @@ class LineFragment : Fragment() {
             dataSet.addAll(newLines)
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+        when (item.itemId) {
+            R.id.act_search -> {
+                val inflater = LayoutInflater.from(context)
+                val popupView: View = inflater.inflate(R.layout.search_popup, null)
+
+                val width = LinearLayout.LayoutParams.WRAP_CONTENT
+                val height = LinearLayout.LayoutParams.WRAP_CONTENT
+                val focusable = true // lets taps outside the popup also dismiss it
+                val popupWindow = PopupWindow(popupView, width, height, focusable)
+                popupView.findViewById<ImageButton>(R.id.act_search).setOnClickListener { popupWindow.dismiss()
+                // filter rows by search
+                    val search = popupView.findViewById<EditText>(R.id.ed_search).text
+                    val n = view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.getItemCount()!!
+                    for(i in 0..n-1) {
+                        val line = (view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter!! as LineAdapter).getItem(i)
+                        if(search.isNotBlank() and line.name.contains(search,true))
+                            line.highlight = true
+                        else
+                            line.highlight = false
+                    }
+                    view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.notifyDataSetChanged()
+                }
+                popupWindow.showAtLocation(view, Gravity.TOP, 20, 378)
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
 }
