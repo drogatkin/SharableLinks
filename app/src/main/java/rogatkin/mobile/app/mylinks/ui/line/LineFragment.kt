@@ -218,10 +218,7 @@ class LineFragment : Fragment() {
                     val n = view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.getItemCount()!!
                     for(i in 0..n-1) {
                         val line = (view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter!! as LineAdapter).getItem(i)
-                        if(search.isNotBlank() and line.name.contains(search,true))
-                            line.highlight = true
-                        else
-                            line.highlight = false
+                        line.highlight = search.isNotBlank() and line.name.contains(search,true)
                     }
                     view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.notifyDataSetChanged()
                 }
