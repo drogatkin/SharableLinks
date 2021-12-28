@@ -16,7 +16,7 @@ public class line extends Id {
     //final static String URL_PAT = android.util.Patterns.WEB_URL.pattern();
     @WebA
     @StoreA(index = true)
-    @PresentA(required = true, viewFieldId = R.id.ed_linkname, listViewFieldId = R.id.tv_name)
+    @PresentA(required = true, viewFieldId = R.id.ed_linkname, normalize = "t", listViewFieldId = R.id.tv_name)
     public String name;
     @StoreA()
     @WebA("link")
