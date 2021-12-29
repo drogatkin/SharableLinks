@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     lateinit var model: Model
 
-    val scheduler = Timer()
+    var scheduler = Timer()
 
     var android_id : String? = null
 
@@ -169,9 +169,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         model.helper.loadPreferences(settings, false)
         //settings.aname = getDefaultSharedPreferencesName(applicationContext)
         if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
+            // makes sense to put in synchronized
+            scheduler = Timer()
             scheduler.scheduleAtFixedRate(timerTask {
                 speakWhatHappened()
-            }, TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(interval))
+            }, TimeUnit.MINUTES.toMillis(2), TimeUnit.MINUTES.toMillis(interval))
         } else
             scheduler.cancel()
     }
