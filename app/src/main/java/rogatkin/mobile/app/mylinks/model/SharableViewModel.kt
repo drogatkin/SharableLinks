@@ -16,10 +16,6 @@ class SharableViewModel : ViewModel() {
         line.value = group
     }
 
-    fun setLinesAsynch(group: group) {
-        line.postValue(group)
-    }
-
     fun getLink(): LiveData<line> {
         return dot
     }

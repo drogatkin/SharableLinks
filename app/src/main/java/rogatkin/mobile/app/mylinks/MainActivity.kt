@@ -143,7 +143,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                 .putLong("time", Date().getTime()).apply()
             // use a shareable viewmodel to update model and observers automatically do redraw
-            viewModel.getLines().value?.let { viewModel.setLinesAsynch(it) } // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
+            // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
+            viewModel.getLines().value?.let {runOnUiThread {viewModel.setLines(it)}}
         }, false)
     }
 
