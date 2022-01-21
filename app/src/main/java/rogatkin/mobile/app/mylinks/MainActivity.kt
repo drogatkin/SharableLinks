@@ -127,6 +127,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             lines.token = null
         else
             lines.token = "s_token " + lines.token
+        // potentially server can process a new update but returning a result can fail
+        // as a result, a double records can be created, how to address that?
+        // what if each update gets some transaction id? if it isn't successful then the id reminds be the same
+        // so server can ignore already processed id, header X-Requested-With can be used to hold transaction id
+        // a repeating transaction has to include exact same changes (anyway the case needs to be confirmed)
         model.web.put(lines.lines, lines, { ls ->
             lines.lines = model.web.putJSONArray(ls.response, line(), true)
             // store lines back to db which were changed

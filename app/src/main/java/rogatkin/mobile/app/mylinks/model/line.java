@@ -18,7 +18,7 @@ public class line extends Id {
     @StoreA(index = true)
     @PresentA(required = true, viewFieldId = R.id.ed_linkname, normalize = "t", listViewFieldId = R.id.tv_name)
     public String name;
-    @StoreA()
+    @StoreA(unique=true)
     @WebA("link")
     @PresentA(required = true, viewFieldId = R.id.ed_url, normalize = "t",validator=Validator.class)
     public String url;
