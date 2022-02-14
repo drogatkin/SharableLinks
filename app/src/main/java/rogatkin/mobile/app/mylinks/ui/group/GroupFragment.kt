@@ -41,6 +41,9 @@ class GroupFragment : Fragment() {
             this.setLayoutManager(LinearLayoutManager(context))
             setRecyclerViewItemTouchListener().attachToRecyclerView(this)
         }
+        vm.getLines().value?.let {
+            textView.setText(it.name)
+        }
         groupViewModel.getGroups().observe(viewLifecycleOwner, Observer {
             with(root.findViewById<RecyclerView>(R.id.ls_groups)) {
                 if (this.adapter == null) {
