@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
-import android.view.LayoutInflater
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,7 +20,6 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.line
-import java.util.*
 
 
 class LineFragment : Fragment() {
@@ -222,7 +220,7 @@ class LineFragment : Fragment() {
                     }
                     view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.notifyDataSetChanged()
                 }
-                popupWindow.showAtLocation(view, Gravity.TOP, 20, 378)
+                popupWindow.showAtLocation(view, Gravity.TOP, 20, 196)
                 true
             }
             else -> {
