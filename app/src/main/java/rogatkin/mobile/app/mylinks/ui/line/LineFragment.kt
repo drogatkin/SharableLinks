@@ -10,7 +10,6 @@ import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +32,7 @@ class LineFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_line, container, false)
         setHasOptionsMenu(true)
-        vm.getLines().observe(viewLifecycleOwner, Observer {
+        vm.getLines().observe(viewLifecycleOwner) {
             (activity as MainActivity).model.vc.fillView(activity, root, it, true)
             requireActivity().invalidateOptionsMenu()
             with(root.findViewById<RecyclerView>(R.id.ls_links)) {
@@ -59,7 +58,7 @@ class LineFragment : Fragment() {
                     this.adapter?.notifyDataSetChanged()
                 }
             }
-        })
+        }
         vm.getLines().value?.let { vm.setLines(it) }
 
         val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
@@ -213,12 +212,13 @@ class LineFragment : Fragment() {
                 popupView.findViewById<ImageButton>(R.id.act_search).setOnClickListener { popupWindow.dismiss()
                 // filter rows by search
                     val search = popupView.findViewById<EditText>(R.id.ed_search).text
-                    val n = view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.itemCount!!
+                    val rv = view?.findViewById<RecyclerView>(R.id.ls_links)
+                    val n = rv?.adapter?.itemCount!!
                     for(i in 0 until n) {
-                        val line = (view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter!! as LineAdapter).getItem(i)
+                        val line = (rv.adapter!! as LineAdapter).getItem(i)
                         line.highlight = search.isNotBlank() and line.name.contains(search,true)
                     }
-                    view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.notifyDataSetChanged()
+                    (rv.adapter!! as LineAdapter).notifyDataSetChanged()
                 }
                 popupWindow.showAtLocation(view, Gravity.TOP, 20, 196)
                 true
