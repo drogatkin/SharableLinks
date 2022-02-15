@@ -37,7 +37,7 @@ class LineFragment : Fragment() {
             (activity as MainActivity).model.vc.fillView(activity, root, it, true)
             requireActivity().invalidateOptionsMenu()
             with(root.findViewById<RecyclerView>(R.id.ls_links)) {
-                this.setLayoutManager(LinearLayoutManager(context))
+                this.layoutManager = LinearLayoutManager(context)
                 val ln = line()
                 ln.group_id = it.id
                 if (this.adapter == null) {
@@ -85,7 +85,7 @@ class LineFragment : Fragment() {
                             position
                         )
                         vm.setLink(line)
-                        activity?.findViewById<BottomNavigationView>(R.id.nav_view)?.setSelectedItemId(R.id.navigation_dot)
+                        activity?.findViewById<BottomNavigationView>(R.id.nav_view)?.selectedItemId = R.id.navigation_dot
                     }
                     ItemTouchHelper.LEFT -> {
                         if ((activity as MainActivity).model.remove(line) == 1) {
@@ -103,7 +103,7 @@ class LineFragment : Fragment() {
                 }
             }
         }
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(root.findViewById<RecyclerView>(R.id.ls_links))
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(root.findViewById(R.id.ls_links))
         return root
     }
 
@@ -129,13 +129,13 @@ class LineFragment : Fragment() {
     inner class LineAdapter(private val dataSet: ArrayList<line>) :
         RecyclerView.Adapter<LineAdapter.ViewHolder>() {
 
-        inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view),
+        inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view),
             View.OnClickListener {
             init {
                 view.setOnClickListener(this)
             }
 
-            var urlText = ""
+            private var urlText = ""
             fun update(element: line) {
                 when (element.name) {
                     null -> element.name = "not set"
@@ -154,7 +154,7 @@ class LineFragment : Fragment() {
 
                 } else {
                     val a = TypedValue()
-                    context!!.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true)
+                    context!!.theme.resolveAttribute(android.R.attr.windowBackground, a, true)
                     if (a.type >= TypedValue.TYPE_FIRST_COLOR_INT && a.type <= TypedValue.TYPE_LAST_COLOR_INT)
                         view.setBackgroundColor(a.data)
                     else
@@ -169,7 +169,7 @@ class LineFragment : Fragment() {
                 try {
                     activity!!.startActivity(i)
                 } catch (e: Exception) {
-                    Snackbar.make(view, "Exception: "+e, 10*1000).show()
+                    Snackbar.make(view, "Exception: $e", 10*1000).show()
                 }
             }
 
@@ -192,7 +192,7 @@ class LineFragment : Fragment() {
             dataSet.removeAt(pos)
         }
 
-        fun getItem(pos: Int): line = dataSet.get(pos)
+        fun getItem(pos: Int): line = dataSet[pos]
 
         fun refresh(newLines: ArrayList<line>) {
             dataSet.clear()
@@ -213,8 +213,8 @@ class LineFragment : Fragment() {
                 popupView.findViewById<ImageButton>(R.id.act_search).setOnClickListener { popupWindow.dismiss()
                 // filter rows by search
                     val search = popupView.findViewById<EditText>(R.id.ed_search).text
-                    val n = view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.getItemCount()!!
-                    for(i in 0..n-1) {
+                    val n = view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter?.itemCount!!
+                    for(i in 0 until n) {
                         val line = (view?.findViewById<RecyclerView>(R.id.ls_links)?.adapter!! as LineAdapter).getItem(i)
                         line.highlight = search.isNotBlank() and line.name.contains(search,true)
                     }
