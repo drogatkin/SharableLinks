@@ -19,6 +19,7 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.line
+import java.util.*
 
 
 class LineFragment : Fragment() {
@@ -135,10 +136,10 @@ class LineFragment : Fragment() {
             }
 
             private var urlText = ""
-            fun update(element: line) {
+             fun update(element: line) {
                 when (element.name) {
                     null -> element.name = "not set"
-                    "" -> "blank"
+                    "" -> element.name = "blank"
                 }
                 if (element.url != null)
                     urlText = element.url
@@ -159,7 +160,7 @@ class LineFragment : Fragment() {
                     else
                         view.setBackgroundResource(a.data)
                 }
-
+                element.accessed = Date()
             }
 
             override fun onClick(v: View?) {
