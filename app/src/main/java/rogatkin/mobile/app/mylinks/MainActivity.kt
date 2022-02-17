@@ -19,6 +19,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.model.*
 import rogatkin.mobile.app.mylinks.ui.SettingsActivity
 import java.util.*
+import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timerTask
 
@@ -26,11 +27,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     lateinit var model: Model
 
-    var scheduler = Timer()
+    private var scheduler = Timer()
 
-    var android_id : String? = null
+    private var android_id : String? = null
 
     private val viewModel: SharableViewModel by viewModels()
+
+    private val lock = Semaphore(1)
 
     //lateinit var mHandler: Handler
 
@@ -70,20 +73,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         var salt = PreferenceManager.getDefaultSharedPreferences(this).getInt("SALT", 0)
         if (salt == 0) {
             salt = getRandomNumber(1004, 9999)
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("SALT", salt)
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("SALT", salt).apply()
         }
-        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+        android_id = Settings.Secure.getString(applicationContext.contentResolver,
             Settings.Secure.ANDROID_ID) + "-" + salt
     }
 
-    fun getRandomNumber(min: Int, max: Int): Int {
+    private fun getRandomNumber(min: Int, max: Int): Int {
         return Random().nextInt((max - min) + 1) + min
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         //return super.onCreateOptionsMenu(menu)
-        getMenuInflater().inflate(R.menu.top_action_menu, menu);
-        return true;
+        menuInflater.inflate(R.menu.top_action_menu, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -106,6 +109,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     fun speakWhatHappened() {
         // found all records changed from since, if null, then all
 // val links = model.load(null, line::class.java, null,  "id", "name", "url", "description")
+        if (!lock.tryAcquire())
+            return
         val lines = lines()
         val since = PreferenceManager.getDefaultSharedPreferences(this).getLong("time", 1000) / 1000 // some trick to get value in seconds
         val filter = ContentValues()
@@ -121,7 +126,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         lines.modifiedSince = Date(since * 1000)
        // lines.modifiedSince = Date(1 * 1000) // debug, all always
         // "user-agent" header should be set to "mobile:android" ...
-        lines.user_agent += ":" + android_id  // can be app specific id, not a device
+        lines.user_agent += ":$android_id"  // can be app specific id, not a device
         lines.token = PreferenceManager.getDefaultSharedPreferences(this).getString("token", null)
         if (lines.token.isNullOrBlank())
             lines.token = null
@@ -132,6 +137,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         // what if each update gets some transaction id? if it isn't successful then the id reminds be the same
         // so server can ignore already processed id, header X-Requested-With can be used to hold transaction id
         // a repeating transaction has to include exact same changes (anyway the case needs to be confirmed)
+
         model.web.put(lines.lines, lines, { ls ->
             lines.lines = model.web.putJSONArray(ls.response, line(), true)
             // store lines back to db which were changed
@@ -146,18 +152,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     model.save(it, "group_id")
             }
             PreferenceManager.getDefaultSharedPreferences(this).edit()
-                .putLong("time", Date().getTime()).apply()
+                .putLong("time", Date().time).apply()
             // use a shareable viewmodel to update model and observers automatically do redraw
             // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
             viewModel.getLines().value?.let {runOnUiThread {viewModel.setLines(it)}}
+            lock.release() // think how to release in case of errors
         }, false)
     }
 
     fun getWhatHappened() {
         val back = linnes_back(PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base))
-        model.web.get(back, {
+        model.web.get(back) {
             val lines = model.web.putJSONArray(it.response, line(), true)
-        })
+        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -169,11 +176,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    fun periodic() {
+    private fun periodic() {
         val settings = setting()
         model.helper.loadPreferences(settings, false)
         //settings.aname = getDefaultSharedPreferencesName(applicationContext)
-        if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and "automatic".equals(settings.sync_mode)) {
+        if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and ("automatic" == settings.sync_mode)) {
             // makes sense to put in synchronized
             scheduler = Timer()
             scheduler.scheduleAtFixedRate(timerTask {
