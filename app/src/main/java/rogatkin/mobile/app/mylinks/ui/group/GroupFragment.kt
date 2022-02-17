@@ -5,7 +5,6 @@ import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,13 +37,13 @@ class GroupFragment : Fragment() {
         val textView: TextView = root.findViewById(R.id.ed_groupname)
         textView.addTextChangedListener(ChangeWatcher(this))
         with(root.findViewById<RecyclerView>(R.id.ls_groups)!!) {
-            this.setLayoutManager(LinearLayoutManager(context))
+            this.layoutManager = LinearLayoutManager(context)
             setRecyclerViewItemTouchListener().attachToRecyclerView(this)
         }
         vm.getLines().value?.let {
-            textView.setText(it.name)
+            textView.text = it.name
         }
-        groupViewModel.getGroups().observe(viewLifecycleOwner, Observer {
+        groupViewModel.getGroups().observe(viewLifecycleOwner)  {
             with(root.findViewById<RecyclerView>(R.id.ls_groups)) {
                 if (this.adapter == null) {
                     this.adapter = GroupAdapter(
@@ -60,7 +59,7 @@ class GroupFragment : Fragment() {
                 }
             }
             requireActivity().invalidateOptionsMenu()
-        })
+        }
 
         return root
     }
@@ -71,10 +70,10 @@ class GroupFragment : Fragment() {
         try {
             (activity as MainActivity).model.vc.fillModel(context, activity, group)
             menu.findItem(R.id.act_add).isVisible = group.id == 0L
-            menu.findItem(R.id.act_done).isVisible = !group.name.isEmpty() && group.id > 0
+            menu.findItem(R.id.act_done).isVisible = group.name.isNotEmpty() && group.id > 0
         } catch(iae:IllegalArgumentException) {
-            menu.findItem(R.id.act_add).setVisible(false)
-            menu.findItem(R.id.act_done).setVisible(false)
+            menu.findItem(R.id.act_add).isVisible = false
+            menu.findItem(R.id.act_done).isVisible = false
         }
     }
 
@@ -160,7 +159,7 @@ class GroupFragment : Fragment() {
          * Provide a reference to the type of views that you are using
          * (custom ViewHolder).
          */
-        inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view),
+        inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view),
             View.OnClickListener {
 
             fun update(element: group) {
@@ -191,7 +190,7 @@ class GroupFragment : Fragment() {
             dataSet.removeAt(pos)
         }
 
-        fun getItem(pos: Int): group = dataSet.get(pos)
+        fun getItem(pos: Int): group = dataSet[pos]
 
         fun refresh(newGroups: ArrayList<group>) {
             dataSet.clear()

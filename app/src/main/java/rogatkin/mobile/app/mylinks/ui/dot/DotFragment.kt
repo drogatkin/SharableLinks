@@ -6,7 +6,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
@@ -34,10 +33,10 @@ class DotFragment : Fragment() {
         linkView.setOnFocusChangeListener{_, hasFocus ->
             if (!hasFocus)
                 requireActivity().invalidateOptionsMenu() }
-        vm.getLink().observe(viewLifecycleOwner, Observer {
+        vm.getLink().observe(viewLifecycleOwner) {
             (activity as MainActivity).model.vc.fillView(activity, root, it, false)
             requireActivity().invalidateOptionsMenu()
-        })
+        }
         return root
     }
 
@@ -51,8 +50,8 @@ class DotFragment : Fragment() {
                 line == null || line.group_id == 0L && vm.getLines().value != null && vm.getLines().value!!.id != 0L
             menu.findItem(R.id.act_done).isVisible = line != null && line.group_id > 0
         } catch (iae: IllegalArgumentException) {
-            menu.findItem(R.id.act_add).setVisible(false)
-            menu.findItem(R.id.act_done).setVisible(false)
+            menu.findItem(R.id.act_add).isVisible = false
+            menu.findItem(R.id.act_done).isVisible = false
         }
     }
 
@@ -75,7 +74,7 @@ class DotFragment : Fragment() {
                     view?.let {
                         Snackbar.make(
                             it,
-                            getResources().getString(R.string.err_invalidurl),
+                            resources.getString(R.string.err_invalidurl),
                             10 * 1000
                         ).show()
                     }
@@ -97,7 +96,7 @@ class DotFragment : Fragment() {
                     view?.let {
                         Snackbar.make(
                             it,
-                            getResources().getString(R.string.err_invalidurl),
+                            resources.getString(R.string.err_invalidurl),
                             10 * 1000
                         ).show()
                     }
@@ -109,10 +108,10 @@ class DotFragment : Fragment() {
             }
         }
 
-    fun sync() {
+    private fun sync() {
         val settings = setting()
         (activity as MainActivity).model.helper.loadPreferences(settings, false)
-        if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and "manual".equals(settings.sync_mode))
+        if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and ("manual" == settings.sync_mode))
             (activity as MainActivity).speakWhatHappened()
     }
 
