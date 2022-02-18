@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
@@ -19,36 +21,30 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import rogatkin.mobile.app.mylinks.model.*
 import rogatkin.mobile.app.mylinks.ui.SettingsActivity
 import java.util.*
-import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.timerTask
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     lateinit var model: Model
 
-    private var scheduler = Timer()
-
     private var android_id : String? = null
 
     private val viewModel: SharableViewModel by viewModels()
 
-    private val lock = Semaphore(1)
-
-    //lateinit var mHandler: Handler
+    lateinit var mHandler: Handler
 
     companion object {
         const val server_url_base =
             "http://dmitriy-desktop:8080/weblinks"
         const val TAG = "Links"
 
-        const val interval = 30L
+        const val interval = 20L
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initID( )
-       // mHandler = Handler(Looper.getMainLooper())
+        mHandler = Handler(Looper.getMainLooper())
 
         model = Model(this)
         setContentView(R.layout.activity_main)
@@ -108,9 +104,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     fun speakWhatHappened() {
         // found all records changed from since, if null, then all
-// val links = model.load(null, line::class.java, null,  "id", "name", "url", "description")
-        if (!lock.tryAcquire())
-            return
         val lines = lines()
         val since = PreferenceManager.getDefaultSharedPreferences(this).getLong("time", 1000) / 1000 // some trick to get value in seconds
         val filter = ContentValues()
@@ -155,7 +148,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             // use a shareable viewmodel to update model and observers automatically do redraw
             // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
             viewModel.getLines().value?.let {runOnUiThread {viewModel.setLines(it)}}
-            lock.release() // think how to release in case of errors
+            periodic()
         }, false)
     }
 
@@ -178,14 +171,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun periodic() {
         val settings = setting()
         model.helper.loadPreferences(settings, false)
-        //settings.aname = getDefaultSharedPreferencesName(applicationContext)
         if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and ("automatic" == settings.sync_mode)) {
-            // makes sense to put in synchronized
-            scheduler = Timer()
-            scheduler.scheduleAtFixedRate(timerTask {
-                speakWhatHappened()
-            }, TimeUnit.MINUTES.toMillis(2), TimeUnit.MINUTES.toMillis(interval))
+            Log.d(TAG, "rescheduling...")
+            mHandler.postDelayed({speakWhatHappened()}, TimeUnit.MINUTES.toMillis(interval))
+
         } else
-            scheduler.cancel()
+            mHandler.removeCallbacksAndMessages(null)
     }
 }
