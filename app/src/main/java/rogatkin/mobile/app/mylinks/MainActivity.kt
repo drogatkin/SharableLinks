@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initID( )
-        mHandler = Handler(Looper.getMainLooper())
+        mHandler = Handler(Looper.myLooper()!!)
 
         model = Model(this)
         setContentView(R.layout.activity_main)
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 true
             }
             R.id.act_sync -> {
-                speakWhatHappened()
+               periodic() // speakWhatHappened()
                 true
             }
             else -> {
@@ -131,24 +131,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         // a repeating transaction has to include exact same changes (anyway the case needs to be confirmed)
 
         model.web.put(lines.lines, lines, { ls ->
-            lines.lines = model.web.putJSONArray(ls.response, line(), true)
-            // store lines back to db which were changed
-            lines.lines.forEach {
-                it.global_id = it.global_id - it.id
-                it.id = it.id + it.global_id
-                it.global_id = -it.global_id + it.id
-                it.group_id = 1 // not changing, but just in case
-                it.modified_on = Date()
-                Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
-                if (model.validate(it))
-                    model.save(it, "group_id")
-            }
-            PreferenceManager.getDefaultSharedPreferences(this).edit()
-                .putLong("time", Date().time).apply()
-            // use a shareable viewmodel to update model and observers automatically do redraw
-            // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
-            viewModel.getLines().value?.let {runOnUiThread {viewModel.setLines(it)}}
-            periodic()
+            try {
+                lines.lines = model.web.putJSONArray(ls.response, line(), true)
+                // store lines back to db which were changed
+                lines.lines.forEach {
+                    it.global_id = it.global_id - it.id
+                    it.id = it.id + it.global_id
+                    it.global_id = -it.global_id + it.id
+                    it.group_id = 1 // not changing, but just in case
+                    it.modified_on = Date()
+                    Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
+                    if (model.validate(it))
+                        model.save(it, "group_id")
+                }
+                PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putLong("time", Date().time).apply()
+                // use a shareable viewmodel to update model and observers automatically do redraw
+                // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
+                viewModel.getLines().value?.let { runOnUiThread { viewModel.setLines(it) } }
+            } finally {periodic()}
         }, false)
     }
 
@@ -172,7 +173,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val settings = setting()
         model.helper.loadPreferences(settings, false)
         if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and ("automatic" == settings.sync_mode)) {
-            Log.d(TAG, "rescheduling...")
+            Log.d(TAG, "rescheduling to...$interval mins")
             mHandler.postDelayed({speakWhatHappened()}, TimeUnit.MINUTES.toMillis(interval))
 
         } else
