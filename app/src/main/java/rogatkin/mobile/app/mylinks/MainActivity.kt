@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     companion object {
         const val server_url_base =
-            "http://dmitriy-desktop:8080/weblinks"
+            "https://www.linkseverywhere.com"
         const val TAG = "Links"
 
         const val interval = 20L
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 true
             }
             R.id.act_sync -> {
-               periodic() // speakWhatHappened()
+               // speakWhatHappened()
                 true
             }
             else -> {

@@ -26,7 +26,8 @@ class GroupViewModel(val model: Model) : ViewModel() {
 }
 
 class ViewModelModelFactory(val model: Model) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(Model::class.java).newInstance(model)
     }
 
