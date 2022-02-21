@@ -13,4 +13,6 @@ public class setting {
     public String server_name;
     @StoreA(storeName = "token")
     public String token;
+    @StoreA
+    public boolean divider;
 }

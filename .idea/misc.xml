@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/layout/recycler_line.xml" value="0.22" />
         <entry key="app/src/main/res/layout/search_popup.xml" value="0.32155797101449274" />
         <entry key="app/src/main/res/layout/settings_activity.xml" value="0.385258358662614" />
+        <entry key="app/src/main/res/xml/root_preferences.xml" value="0.22" />
       </map>
     </option>
   </component>

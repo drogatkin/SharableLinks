@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.R
 import rogatkin.mobile.app.mylinks.model.SharableViewModel
 import rogatkin.mobile.app.mylinks.model.line
+import rogatkin.mobile.app.mylinks.model.setting
 import java.util.*
 
 
@@ -38,6 +40,11 @@ class LineFragment : Fragment() {
             requireActivity().invalidateOptionsMenu()
             with(root.findViewById<RecyclerView>(R.id.ls_links)) {
                 this.layoutManager = LinearLayoutManager(context)
+                val settings = setting()
+                (activity as MainActivity).model.helper.loadPreferences(settings, true, "divider")
+                // TODO update dynamically as settings changed
+                if(settings.divider)
+                  this.addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
                 val ln = line()
                 ln.group_id = it.id
                 if (this.adapter == null) {
