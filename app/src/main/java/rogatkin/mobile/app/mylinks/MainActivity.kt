@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private val viewModel: SharableViewModel by viewModels()
 
-    lateinit var mHandler: Handler
+    private lateinit var mHandler: Handler
 
     companion object {
         const val server_url_base =

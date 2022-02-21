@@ -29,9 +29,7 @@ class GroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         groupViewModel =
-            ViewModelProvider(this, ViewModelModelFactory((activity as MainActivity).model)).get(
-                GroupViewModel::class.java
-            )
+            ViewModelProvider(this, ViewModelModelFactory((activity as MainActivity).model))[GroupViewModel::class.java]
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
         setHasOptionsMenu(true)
         val textView: TextView = root.findViewById(R.id.ed_groupname)
@@ -206,7 +204,7 @@ class GroupFragment : Fragment() {
             }
             else -> {
                 view?.findViewById<RecyclerView>(R.id.ls_groups)?.visibility = View.VISIBLE
-                view?.findViewById<TextView>(R.id.tx_nogroups)?.visibility = View.GONE
+                view?.findViewById<TextView>(R.id.tx_nogroups)?.visibility = View.INVISIBLE
             }
         }
     }

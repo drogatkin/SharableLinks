@@ -128,7 +128,7 @@ class LineFragment : Fragment() {
             }
             else -> {
                 view?.findViewById<RecyclerView>(R.id.ls_links)?.visibility = View.VISIBLE
-                view?.findViewById<TextView>(R.id.text_noline)?.visibility = View.GONE
+                view?.findViewById<TextView>(R.id.text_noline)?.visibility = View.INVISIBLE
             }
         }
     }
