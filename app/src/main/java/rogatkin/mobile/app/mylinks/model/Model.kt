@@ -53,7 +53,7 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
                 )
             }
         } catch(se: SQLException) {
-            Log.e(TAG, "An error in saving: " + se, se)
+            Log.e(TAG, "An error in saving: $se", se)
         } finally {
             db.close()
         }
@@ -106,25 +106,21 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
 
     fun remove(r: Id): Int {
         val database = this.writableDatabase
-        return try {
-            database.delete(
+        return database.use {
+            it.delete(
                 helper.resolveStoreName(r.javaClass),
                 "_id=?", arrayOf("" + r.id)
             )
-        } finally {
-            database.close()
         }
     }
 
     fun removeGroup(gr:group) :Int{
         val database = this.writableDatabase
-        return try {
-            database.delete("group_tb", "_id=? and NOT EXISTS (\n" +
+        return database.use {
+            it.delete("group_tb", "_id=? and NOT EXISTS (\n" +
                     "    SELECT *\n" +
                     "    FROM line\n" +
                     "    WHERE group_id = group_tb._id)", arrayOf(""+gr.id))
-        } finally {
-            database.close()
         }
     }
 

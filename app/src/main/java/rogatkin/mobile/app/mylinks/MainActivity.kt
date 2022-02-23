@@ -135,9 +135,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 lines.lines = model.web.putJSONArray(ls.response, line(), true)
                 // store lines back to db which were changed
                 lines.lines.forEach {
-                    it.global_id = it.global_id - it.id
+                    /*it.global_id = it.global_id - it.id
                     it.id = it.id + it.global_id
-                    it.global_id = -it.global_id + it.id
+                    it.global_id = -it.global_id + it.id */
+                    it.global_id = it.id.apply { it.id = it.global_id } // Kotlin way?
                     it.group_id = 1 // not changing, but just in case
                     it.modified_on = Date()
                     Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
