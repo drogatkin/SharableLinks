@@ -3,8 +3,12 @@ package rogatkin.mobile.app.mylinks.ui
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import rogatkin.mobile.app.mylinks.R
+import java.text.DateFormat.getDateTimeInstance
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -18,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
                 .commit()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -34,6 +39,21 @@ class SettingsActivity : AppCompatActivity() {
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            val mode : ListPreference? = findPreference("mode")
+            mode?.let {
+                it.summaryProvider = Preference.SummaryProvider<ListPreference>(){
+                  val last =  PreferenceManager
+                        .getDefaultSharedPreferences(requireContext()).getLong("time", 0)
+                    when(it.value) {
+                        "manual" -> it.entry
+                        else -> {if (last >0) {
+                            val ls = getDateTimeInstance().format(last)
+                            ""+it.entry+", last $ls"
+                        } else
+                            ""+it.entry}
+                    }
+                }
+            }
         }
     }
 }

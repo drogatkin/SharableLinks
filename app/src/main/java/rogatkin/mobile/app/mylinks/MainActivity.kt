@@ -176,7 +176,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and ("automatic" == settings.sync_mode)) {
             Log.d(TAG, "rescheduling to...$interval mins")
             mHandler.postDelayed({speakWhatHappened()}, TimeUnit.MINUTES.toMillis(interval))
-
         } else
             mHandler.removeCallbacksAndMessages(null)
     }
