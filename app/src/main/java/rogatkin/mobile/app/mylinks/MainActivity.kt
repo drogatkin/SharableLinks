@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             try {
                 lines.lines = model.web.putJSONArray(ls.response, line(), true)
                 // store lines back to db which were changed
-                lines.lines.forEach {
+                lines.lines?.forEach {
                     /*it.global_id = it.global_id - it.id
                     it.id = it.id + it.global_id
                     it.global_id = -it.global_id + it.id */
@@ -147,9 +147,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .putLong("time", Date().time).apply()
-                // use a shareable viewmodel to update model and observers automatically do redraw
-                // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
-                viewModel.getLines().value?.let { runOnUiThread { viewModel.setLines(it) } }
+                // it needs to refresh only if something returned
+                lines.lines?.apply {
+                    // use a shareable viewmodel to update model and observers automatically do redraw
+                    // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
+                    viewModel.getLines().value?.let { runOnUiThread { viewModel.setLines(it) } }
+                }
+            } catch(ae: Exception ) {
+                // keep all exceptions here
             } finally {periodic()}
         }, false)
     }
@@ -171,12 +176,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun periodic() {
+        mHandler.removeCallbacksAndMessages(null)
         val settings = setting()
         model.helper.loadPreferences(settings, false)
         if (!settings.server_name.isNullOrBlank() and settings.sync_enabled and ("automatic" == settings.sync_mode)) {
             Log.d(TAG, "rescheduling to...$interval mins")
             mHandler.postDelayed({speakWhatHappened()}, TimeUnit.MINUTES.toMillis(interval))
-        } else
-            mHandler.removeCallbacksAndMessages(null)
+        }
     }
 }

@@ -41,7 +41,7 @@ class SettingsActivity : AppCompatActivity() {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
             val mode : ListPreference? = findPreference("mode")
             mode?.let {
-                it.summaryProvider = Preference.SummaryProvider<ListPreference>(){
+                it.summaryProvider = Preference.SummaryProvider<ListPreference> {
                   val last =  PreferenceManager
                         .getDefaultSharedPreferences(requireContext()).getLong("time", 0)
                     when(it.value) {

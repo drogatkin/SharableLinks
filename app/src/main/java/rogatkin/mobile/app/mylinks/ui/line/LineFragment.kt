@@ -35,6 +35,8 @@ class LineFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_line, container, false)
         setHasOptionsMenu(true)
+        vm.getLines().value?:let {
+            root.findViewById<TextView>(R.id.text_noline)?.text = getString(R.string.lb_nogroup)}
         vm.getLines().observe(viewLifecycleOwner) {
             (activity as MainActivity).model.vc.fillView(activity, root, it, true)
             requireActivity().invalidateOptionsMenu()
