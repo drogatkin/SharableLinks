@@ -153,17 +153,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     // since runs not on the main thread, use postValue or do withContext(Dispatchers.Main) {}
                     viewModel.getLines().value?.let { runOnUiThread { viewModel.setLines(it) } }
                 }
-            } catch(ae: Exception ) {
-                // keep all exceptions here
             } finally {periodic()}
         }, false)
-    }
-
-    fun getWhatHappened() {
-        val back = linnes_back(PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base))
-        model.web.get(back) {
-            val lines = model.web.putJSONArray(it.response, line(), true)
-        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
