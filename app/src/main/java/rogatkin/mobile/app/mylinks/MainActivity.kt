@@ -111,8 +111,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         lines.lines =
             model.load(filter, line::class.java, null, "group_id", "created_on")?.toTypedArray()
         // if no changes on our side, they still can be on the server
-        if (lines.lines.size == 0 && false)
-            return
+
         lines.endpoint =
             PreferenceManager.getDefaultSharedPreferences(this).getString("host", server_url_base)
 
