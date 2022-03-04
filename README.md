@@ -3,4 +3,4 @@ It is Android version of a links sharing application. It supposes to be publishe
 
 
 The app can be found at the 
-!(Play store)[https://play.google.com/store/apps/details?id=rogatkin.mobile.app.mylinks]
+![Play store](https://play.google.com/store/apps/details?id=rogatkin.mobile.app.mylinks)
