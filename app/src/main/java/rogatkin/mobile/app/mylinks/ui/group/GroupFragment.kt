@@ -29,7 +29,10 @@ class GroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         groupViewModel =
-            ViewModelProvider(this, ViewModelModelFactory((activity as MainActivity).model))[GroupViewModel::class.java]
+            ViewModelProvider(
+                this,
+                ViewModelModelFactory((activity as MainActivity).model)
+            )[GroupViewModel::class.java]
         val root = inflater.inflate(R.layout.fragment_groups, container, false)
         setHasOptionsMenu(true)
         val textView: TextView = root.findViewById(R.id.ed_groupname)
@@ -41,7 +44,7 @@ class GroupFragment : Fragment() {
         vm.getLines().value?.let {
             textView.text = it.name
         }
-        groupViewModel.getGroups().observe(viewLifecycleOwner)  {
+        groupViewModel.getGroups().observe(viewLifecycleOwner) {
             with(root.findViewById<RecyclerView>(R.id.ls_groups)) {
                 if (this.adapter == null) {
                     this.adapter = GroupAdapter(
@@ -69,36 +72,45 @@ class GroupFragment : Fragment() {
             (activity as MainActivity).model.vc.fillModel(context, activity, group)
             menu.findItem(R.id.act_add).isVisible = group.id == 0L
             menu.findItem(R.id.act_done).isVisible = group.name.isNotEmpty() && group.id > 0
-        } catch(iae:IllegalArgumentException) {
+        } catch (iae: IllegalArgumentException) {
             menu.findItem(R.id.act_add).isVisible = false
             menu.findItem(R.id.act_done).isVisible = false
         }
     }
 
-    private fun setRecyclerViewItemTouchListener() : ItemTouchHelper {
+    private fun setRecyclerViewItemTouchListener(): ItemTouchHelper {
 
         //1
-        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+        val itemTouchCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
                 //3
                 val recyclerView = view?.findViewById<RecyclerView>(R.id.ls_groups)
                 val position = viewHolder.adapterPosition
                 val group = (recyclerView!!.adapter as GroupAdapter).getItem(position)
-                when(swipeDir) {
+                when (swipeDir) {
                     ItemTouchHelper.RIGHT -> {
-                        (activity as MainActivity).model.vc.fillView(context, activity,
-                            group)
+                        (activity as MainActivity).model.vc.fillView(
+                            context, activity,
+                            group
+                        )
                         (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
                         //setFragmentResult("groupId", bundleOf("groupId" to group.id))
                         vm.setLines(group)
                         requireActivity().invalidateOptionsMenu()
                     }
                     ItemTouchHelper.LEFT -> {
-                        if ((activity as MainActivity).model.removeGroup(group) == 1) {
-                            (recyclerView.adapter as GroupAdapter).remove(position)
-                            (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
+                        if (group.id != 1L) {
+                            if ((activity as MainActivity).model.removeGroup(group) == 1) {
+                                (recyclerView.adapter as GroupAdapter).remove(position)
+                                (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
+                            }
                         } else {
                             (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
                         }
@@ -121,12 +133,14 @@ class GroupFragment : Fragment() {
                 (activity as MainActivity).model.save(group)
                 // perhaps just hide the input field
                 group.name = ""
-               (activity as MainActivity).model.vc.fillView(context, activity, group)
-                groupViewModel.setGroups((activity as MainActivity).model.load(
-                    null,
-                    rogatkin.mobile.app.mylinks.model.group::class.java,
-                    null
-                )!!)
+                (activity as MainActivity).model.vc.fillView(context, activity, group)
+                groupViewModel.setGroups(
+                    (activity as MainActivity).model.load(
+                        null,
+                        rogatkin.mobile.app.mylinks.model.group::class.java,
+                        null
+                    )!!
+                )
                 true
             }
             R.id.act_done -> {
@@ -138,11 +152,13 @@ class GroupFragment : Fragment() {
                 group.id = 0
                 (activity as MainActivity).model.vc.fillView(context, activity, group)
                 // TODO Modify just one, no full refresh
-                groupViewModel.setGroups((activity as MainActivity).model.load(
-                    null,
-                    rogatkin.mobile.app.mylinks.model.group::class.java,
-                    null
-                )!!)
+                groupViewModel.setGroups(
+                    (activity as MainActivity).model.load(
+                        null,
+                        rogatkin.mobile.app.mylinks.model.group::class.java,
+                        null
+                    )!!
+                )
                 true
             }
             else -> {
