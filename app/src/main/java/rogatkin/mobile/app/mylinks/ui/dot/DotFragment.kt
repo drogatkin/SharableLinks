@@ -63,7 +63,7 @@ class DotFragment : Fragment() {
                     (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
                     line.id = 0 // add a record
                     line.global_id = 0 // also 0 for new
-                    line.group_id = vm.getLines().value!!.id
+                    vm.getLines().value?.let{line.group_id = it.id}?: run { line.group_id = 1 }
                     line.created_on = Date()
                     line.modified_on = line.created_on
                     (activity as MainActivity).model.save(line)
