@@ -76,6 +76,7 @@ class GroupFragment : Fragment() {
             menu.findItem(R.id.act_add).isVisible = false
             menu.findItem(R.id.act_done).isVisible = false
         }
+        menu.findItem(R.id.act_share).isVisible = false
     }
 
     private fun setRecyclerViewItemTouchListener(): ItemTouchHelper {

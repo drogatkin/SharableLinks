@@ -48,10 +48,12 @@ class DotFragment : Fragment() {
             val line = vm.getLink().value
             menu.findItem(R.id.act_add).isVisible =
                 line == null || line.group_id == 0L && vm.getLines().value != null && vm.getLines().value!!.id != 0L
-            menu.findItem(R.id.act_done).isVisible = line != null && line.group_id > 0
+            menu.findItem(R.id.act_done).isVisible =  line != null && line.group_id > 0
+            menu.findItem(R.id.act_share).isVisible = menu.findItem(R.id.act_done).isVisible
         } catch (iae: IllegalArgumentException) {
             menu.findItem(R.id.act_add).isVisible = false
             menu.findItem(R.id.act_done).isVisible = false
+            menu.findItem(R.id.act_share).isVisible = false
         }
     }
 

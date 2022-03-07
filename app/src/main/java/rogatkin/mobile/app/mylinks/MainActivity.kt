@@ -97,6 +97,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                // speakWhatHappened()
                 true
             }
+            R.id.act_share -> {
+                val line = line()
+                model.vc.fillModel(this, this, line)
+                val i = Intent(Intent.ACTION_SEND)
+                i.type = "text/plain"
+                i.putExtra(Intent.EXTRA_SUBJECT, line.name)
+                i.putExtra(Intent.EXTRA_TEXT, "Hey, ${line.description} ${line.url}")
+                startActivity(Intent.createChooser(i, "Share via"))
+                true
+            }
             else -> {
                 super.onOptionsItemSelected(item)
             }

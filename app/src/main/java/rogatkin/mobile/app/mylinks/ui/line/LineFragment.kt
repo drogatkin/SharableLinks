@@ -120,6 +120,7 @@ class LineFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.act_add).isVisible = false
         menu.findItem(R.id.act_done).isVisible = false
+        menu.findItem(R.id.act_share).isVisible = false
     }
 
     fun showEmpty(empty: Boolean) {
