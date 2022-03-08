@@ -48,7 +48,7 @@ class LineFragment : Fragment() {
                 if(settings.divider)
                   this.addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
                 val ln = line()
-                ln.group_id = it.id
+                ln.group_id = if (it == null) 1 else it.id
                 if (this.adapter == null) {
                     this.adapter = LineAdapter(
                         (activity as MainActivity).model.load(

@@ -5,16 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class SharableViewModel : ViewModel() {
-    private val line = MutableLiveData<group>()
+    private val line = MutableLiveData<group?>()
     private val dot = MutableLiveData<line>()
 
-    fun getLines(): LiveData<group> {
+    fun getLines(): MutableLiveData<group?> {
         return line
     }
 
-    fun setLines(group: group) {
+    fun setLines(group: group?) {
         line.value = group
     }
+
+    fun clearLines() = {line.value = null}
 
     fun getLink(): LiveData<line> {
         return dot

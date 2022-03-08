@@ -14,11 +14,6 @@ public class Id {
     @WebA("id")
     public long id;
 
-    @StoreA(unique=true)
-    @PresentA(presentType= Hidden)
-    @WebA("sync_id")
-    public long global_id;
-
     @StoreA()
     public Date created_on;
 

@@ -32,6 +32,11 @@ public class line extends Id {
     @PresentA(presentType = Hidden)
     public long group_id;
 
+    @StoreA(unique=true)
+    @PresentA(presentType= Hidden)
+    @WebA("sync_id")
+    public long global_id;
+
     public boolean highlight;
 
     public line clear() {

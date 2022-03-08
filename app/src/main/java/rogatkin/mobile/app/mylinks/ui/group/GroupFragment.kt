@@ -111,7 +111,10 @@ class GroupFragment : Fragment() {
                             if ((activity as MainActivity).model.removeGroup(group) == 1) {
                                 (recyclerView.adapter as GroupAdapter).remove(position)
                                 (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
-                            }
+                                if (vm.getLines().value == group)
+                                    vm.setLines(null)
+                            } else
+                                (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
                         } else {
                             (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
                         }
@@ -129,11 +132,13 @@ class GroupFragment : Fragment() {
             R.id.act_add -> {
                 val group = group()
                 (activity as MainActivity).model.vc.fillModel(context, activity, group)
+                group.id = 0 // new
                 group.created_on = Date()
                 group.modified_on = group.created_on
                 (activity as MainActivity).model.save(group)
                 // perhaps just hide the input field
                 group.name = ""
+                group.id = 0
                 (activity as MainActivity).model.vc.fillView(context, activity, group)
                 groupViewModel.setGroups(
                     (activity as MainActivity).model.load(
