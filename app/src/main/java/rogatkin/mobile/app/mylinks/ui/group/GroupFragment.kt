@@ -107,23 +107,17 @@ class GroupFragment : Fragment() {
                         requireActivity().invalidateOptionsMenu()
                     }
                     ItemTouchHelper.LEFT -> {
-                        if (group.id != 1L) {
-                            if ((activity as MainActivity).model.removeGroup(group) == 1) {
-                                (recyclerView.adapter as GroupAdapter).remove(position)
-                                (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
-                                if (vm.getLines().value == group)
-                                    vm.setLines(null)
-                            } else
-                                (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
-                        } else {
+                        if (group.id != 1L && (activity as MainActivity).model.removeGroup(group) == 1) {
+                            (recyclerView.adapter as GroupAdapter).remove(position)
+                            (recyclerView.adapter as GroupAdapter).notifyItemRemoved(position)
+                            if (vm.getLines().value == group)
+                                vm.setLines(null)
+                        } else
                             (recyclerView.adapter as GroupAdapter).notifyItemChanged(position)
-                        }
                     }
                 }
             }
         }
-
-        //4
         return ItemTouchHelper(itemTouchCallback)
     }
 

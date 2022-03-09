@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 
 class SharableViewModel : ViewModel() {
     private val line = MutableLiveData<group?>()
-    private val dot = MutableLiveData<line>()
+    private val dot = MutableLiveData<line?>()
 
     fun getLines(): MutableLiveData<group?> {
         return line
@@ -16,13 +16,11 @@ class SharableViewModel : ViewModel() {
         line.value = group
     }
 
-    fun clearLines() = {line.value = null}
-
-    fun getLink(): LiveData<line> {
+    fun getLink(): LiveData<line?> {
         return dot
     }
 
-    fun setLink(line: line) {
+    fun setLink(line: line?) {
         dot.value = line
     }
 }

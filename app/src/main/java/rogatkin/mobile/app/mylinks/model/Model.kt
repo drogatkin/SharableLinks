@@ -49,7 +49,7 @@ class Model(ctx: Context) : SQLiteOpenHelper(ctx, "links.db", null, 1) {
                 // TODO update or insert for a table with global_id
                 r.id = db.replaceOrThrow(
                     name, null,
-                    helper.asContentValues(r, false, "id")
+                    helper.asContentValues(r, false,  "id", *extras)
                 )
             }
         } catch(se: SQLException) {

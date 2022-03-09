@@ -34,7 +34,8 @@ class DotFragment : Fragment() {
             if (!hasFocus)
                 requireActivity().invalidateOptionsMenu() }
         vm.getLink().observe(viewLifecycleOwner) {
-            (activity as MainActivity).model.vc.fillView(activity, root, it, false)
+            val line = if (it == null) line() else it
+            (activity as MainActivity).model.vc.fillView(activity, root, line, false)
             requireActivity().invalidateOptionsMenu()
         }
         return root
@@ -68,7 +69,7 @@ class DotFragment : Fragment() {
                     vm.getLines().value?.let{line.group_id = it.id}?: run { line.group_id = 1 }
                     line.created_on = Date()
                     line.modified_on = line.created_on
-                    (activity as MainActivity).model.save(line)
+                    (activity as MainActivity).model.save(line, "global_id")
                     sync()
                     vm.setLink(line.clear())
                     watcher.reset()
@@ -89,7 +90,7 @@ class DotFragment : Fragment() {
                     (activity as MainActivity).model.vc.fillModel(activity, view, line, false)
                     if (line.id > 0) {
                         line.modified_on = Date()
-                        (activity as MainActivity).model.save(line)
+                        (activity as MainActivity).model.save(line, "global_id")
                         sync()
                         vm.setLink(line.clear())
                         watcher.reset()
