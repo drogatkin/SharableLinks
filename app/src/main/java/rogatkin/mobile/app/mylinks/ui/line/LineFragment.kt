@@ -49,10 +49,13 @@ class LineFragment : Fragment() {
                   this.addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
                 val ln = line()
                 ln.group_id = if (it == null) 1 else it.id
+                val whereclause = if (ln.group_id == 1L) "<group_id" else "group_id"
+                if (ln.group_id < 2) ln.group_id = 2
                 if (this.adapter == null) {
                     this.adapter = LineAdapter(
                         (activity as MainActivity).model.load(
-                            (activity as MainActivity).model.whereVals(ln, "group_id"),
+                            (activity as MainActivity).model.whereVals(ln, whereclause),
+                            //null,
                             line::class.java,
                             null
                         )!!

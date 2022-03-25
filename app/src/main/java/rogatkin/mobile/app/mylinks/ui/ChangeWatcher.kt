@@ -6,9 +6,9 @@ import androidx.fragment.app.Fragment
 import rogatkin.mobile.app.mylinks.MainActivity
 import rogatkin.mobile.app.mylinks.model.group
 
-class ChangeWatcher(val fragment: Fragment) : TextWatcher {
-    var isEmpty = true
-    var innerUpdt = false
+class ChangeWatcher(private val fragment: Fragment) : TextWatcher {
+    private var isEmpty = true
+    private var innerUpdt = false
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         if (innerUpdt)
             return
@@ -19,6 +19,7 @@ class ChangeWatcher(val fragment: Fragment) : TextWatcher {
                         fragment.requireActivity().invalidateOptionsMenu()
                         isEmpty = false
                     }
+                    else -> {}
                 }
             }
             false -> {
@@ -36,6 +37,7 @@ class ChangeWatcher(val fragment: Fragment) : TextWatcher {
                         fragment.requireActivity().invalidateOptionsMenu()
                         isEmpty = true
                     }
+                    else -> {}
                 }
             }
          }

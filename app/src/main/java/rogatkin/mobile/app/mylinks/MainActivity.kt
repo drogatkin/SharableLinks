@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     it.modified_on = Date()
                     Log.d(TAG, it.name + " at " + it.id + "/" + it.global_id)
                     if (model.validate(it))
-                        model.save(it, "group_id")
+                        model.save(it)
                 }
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .putLong("time", Date().time).apply()
