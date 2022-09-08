@@ -63,7 +63,7 @@ class LineFragment : Fragment() {
                 } else { // more likely it never happens
                     (this.adapter as LineFragment.LineAdapter).refresh(
                         (activity as MainActivity).model.load(
-                            (activity as MainActivity).model.whereVals(ln, "group_id"),
+                            (activity as MainActivity).model.whereVals(ln, whereclause),
                             line::class.java,
                             null
                         )!!
