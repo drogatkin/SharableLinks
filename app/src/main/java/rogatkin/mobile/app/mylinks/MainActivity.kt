@@ -115,7 +115,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     fun speakWhatHappened() {
         // found all records changed from since, if null, then all
         val lines = lines()
-        val since = PreferenceManager.getDefaultSharedPreferences(this).getLong("time", 1000) / 1000 // some trick to get value in seconds
+        val forceAll = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("full_sync", false)
+        val since = if (!forceAll) PreferenceManager.getDefaultSharedPreferences(this).getLong("time", 1000) / 1000 else 0 // some trick to get value in seconds
+        if (forceAll)
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putBoolean("full_sync", false).apply()
         val filter = ContentValues()
         filter.put(">modified_on", since)
         lines.lines =
